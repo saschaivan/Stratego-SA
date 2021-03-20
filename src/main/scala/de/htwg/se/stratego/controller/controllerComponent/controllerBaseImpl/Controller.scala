@@ -9,7 +9,7 @@ import de.htwg.se.stratego.model.matchFieldComponent.MatchFieldInterface
 import de.htwg.se.stratego.model.matchFieldComponent.matchFieldBaseImpl.{CharacterList, Field, Game, MatchField, Matrix}
 import de.htwg.se.stratego.model.playerComponent.Player
 import de.htwg.se.stratego.util.UndoManager
-
+import scala.collection.mutable.ListBuffer
 import scala.swing.Publisher
 
 
@@ -19,10 +19,11 @@ class Controller @Inject()(var matchField:MatchFieldInterface) extends Controlle
   val fileIO = injector.getInstance(classOf[FileIOInterface])
 
   val list = CharacterList(matchField.fields.matrixSize)
-  var playerBlue = Player("PlayerBlue", list.getCharacterList())
-  var playerRed = Player("PlayerRed", list.getCharacterList())
-  var game = Game(playerBlue, playerRed, matchField.fields.matrixSize, matchField)
-  var playerList = List[Player](playerBlue,playerRed)
+  val playerBlue = Player("PlayerBlue", list.getCharacterList())
+  val playerRed = Player("PlayerRed", list.getCharacterList())
+  val game = Game(playerBlue, playerRed, matchField.fields.matrixSize, matchField)
+  val playerList = List[Player](playerBlue, playerRed)
+  val playerListBuffer: ListBuffer[Player] = ListBuffer.empty
 
   var gameStatus: GameStatus = IDLE
   var currentPlayerIndex: Int = 0
@@ -39,7 +40,8 @@ class Controller @Inject()(var matchField:MatchFieldInterface) extends Controlle
   }
 
   def setPlayers(input: String): String = {
-    playerList = game.setPlayers(input)
+    for (i <- game.setPlayers(input))
+      playerListBuffer.append(i)
     nextState
     publish(new PlayerChanged)
     ""
@@ -47,7 +49,7 @@ class Controller @Inject()(var matchField:MatchFieldInterface) extends Controlle
 
   def createEmptyMatchfield(size:Int): String = {
     matchField = new MatchField(size, size, false)
-    game = game.copy(playerBlue,playerRed,size,matchField)
+    game.copy(playerBlue,playerRed,size,matchField)
     gameStatus=NEW
     state = EnterPlayer(this)
     publish(new NewGame)
@@ -188,7 +190,8 @@ class Controller @Inject()(var matchField:MatchFieldInterface) extends Controlle
     val (newmatchField, newPlayerIndex, newPlayers) = fileIO.load
     matchField = newmatchField
     currentPlayerIndex = newPlayerIndex
-    playerList = game.setPlayers(newPlayers)
+    for (i <- game.setPlayers(newPlayers))
+      playerListBuffer.append(i)
     state = GameState(this)
     publish(new FieldChanged)
     "load"

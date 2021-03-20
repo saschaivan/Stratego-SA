@@ -7,6 +7,7 @@ import de.htwg.se.stratego.controller.controllerComponent.GameStatus._
 import scala.swing.{Color, _}
 import scala.swing.event._
 import de.htwg.se.stratego.controller.controllerComponent.{ControllerInterface, FieldChanged, GameFinished, GameStatus, NewGame, PlayerSwitch}
+import de.htwg.se.stratego.model.playerComponent.Player
 import javax.imageio.ImageIO
 import javax.swing.{BorderFactory, JOptionPane, WindowConstants}
 import javax.swing.border.LineBorder
@@ -27,6 +28,7 @@ class GameFrame(controller:ControllerInterface) extends Frame{
   val defaultBorder = new LineBorder(java.awt.Color.WHITE,1)
   val grColor = new Color(79,76,70)
   val iconImg = ImageIO.read(getClass.getResource("iconS.png"))
+  val playerName: List[Player] = if(controller.playerListBuffer.isEmpty) controller.playerList else controller.playerListBuffer.toList
 
   title = "Stratego"
   iconImage = iconImg
@@ -161,8 +163,11 @@ class GameFrame(controller:ControllerInterface) extends Frame{
 
   val status = new TextField(controller.statusString, 20)
 
-  val message = new Label{
-    text= "<html>"+controller.playerList(controller.currentPlayerIndex) +"!<br>It's your turn!</html>"
+
+
+  val message = new TextPane {
+    text = playerName(controller.currentPlayerIndex) + "! It's your turn!"
+    editable = false
     foreground= colBlue
     font = defaultFont
   }
@@ -252,7 +257,7 @@ class GameFrame(controller:ControllerInterface) extends Frame{
     } fields(row)(column).redraw
     status.text = controller.statusString
 
-    message.text = "<html>"+controller.playerList(controller.currentPlayerIndex) +"!<br>It's your turn!</html>"
+    message.text = playerName(controller.currentPlayerIndex) + "! It's your turn!"
     if(controller.currentPlayerIndex.equals(1)){
       message.foreground= colRed
     }else{

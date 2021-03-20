@@ -6,6 +6,7 @@ import scala.swing._
 import scala.swing.event._
 import de.htwg.se.stratego.controller.controllerComponent.{ControllerInterface, FieldChanged, GameStatus, MachtfieldInitialized, NewGame, PlayerSwitch}
 import de.htwg.se.stratego.controller.controllerComponent.GameStatus._
+import de.htwg.se.stratego.model.playerComponent.Player
 import javax.imageio.ImageIO
 import javax.swing.{BorderFactory, WindowConstants}
 import javax.swing.border.LineBorder
@@ -23,6 +24,7 @@ class SetFrame(controller:ControllerInterface) extends Frame {
   val legendFont = new Font("Calibri", Font.BOLD, 15)
   val defaultColor = new Color(143,138,126)
   val defaultBorder = new LineBorder(java.awt.Color.WHITE,1)
+  val playerName: List[Player] = if (controller.playerListBuffer.isEmpty) controller.playerList else controller.playerListBuffer.toList
 
   title = "Stratego"
   iconImage = iconImg
@@ -69,7 +71,7 @@ class SetFrame(controller:ControllerInterface) extends Frame {
   }
 
   val message = new TextPane {
-    text= "Welcome to STRATEGO!\n" + controller.playerList(0).toString + " it's your turn. " +
+    text= "Welcome to STRATEGO!\n" + playerName(0).toString + " it's your turn. " +
       "Set your figures on the blue fields with following keystrokes:\n" +
       "Bomb (\uD83D\uDCA3) with B\t" +
       "Marshal (\uD83D\uDC82) with M\n" +
@@ -154,7 +156,7 @@ class SetFrame(controller:ControllerInterface) extends Frame {
       *
        */
 
-      message.text= controller.playerList(1).toString + " now it's your turn. " +
+      message.text= playerName(1).toString + " now it's your turn. " +
         "Set your figures on the red fields with following keystrokes:<br><br>" +
         "Bomb (\uD83D\uDCA3) with B\t" +
         "Marshal (\uD83D\uDC82) with M\n" +

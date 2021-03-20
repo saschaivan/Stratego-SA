@@ -4,6 +4,7 @@ import de.htwg.se.stratego.controller.controllerComponent.GameStatus.GameStatus
 import de.htwg.se.stratego.model.matchFieldComponent.matchFieldBaseImpl.{Field, Matrix}
 import de.htwg.se.stratego.model.playerComponent.Player
 
+import scala.collection.mutable.ListBuffer
 import scala.swing.Publisher
 
 trait ControllerInterface extends Publisher {
@@ -24,6 +25,7 @@ trait ControllerInterface extends Publisher {
   def getSize:Int
   def gameStatus:GameStatus
   def playerList:List[Player]
+  def playerListBuffer: ListBuffer[Player]
   def currentPlayerIndex:Int
   def getField:Matrix[Field]
   def load:String
