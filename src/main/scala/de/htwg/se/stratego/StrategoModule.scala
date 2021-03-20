@@ -12,7 +12,7 @@ import de.htwg.se.stratego.model.fileIoComponent.fileIoJsonImpl.FileIO
 
 class StrategoModule extends AbstractModule with ScalaModule{
 
-  val defaultSize:Int = 10
+  val defaultSize:Int = 4
   val defaultSet:Boolean = false
 
   override def configure():Unit = {

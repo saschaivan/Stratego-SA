@@ -7,9 +7,9 @@ A little info about our project STRATEGO for our class Software Engineering at t
 
 Build status of continus integration with travis
 
-[![Build Status](https://travis-ci.com/BenjaminMannsdoerfer/Stratego.svg?branch=master)](https://travis-ci.com/BenjaminMannsdoerfer/Stratego)
+[![Build Status](https://travis-ci.com/saschaivan/Stratego-SA.svg?branch=main)](https://travis-ci.com/github/saschaivan/Stratego-SA)
 
-
+https://travis-ci.com/saschaivan/Stratego-SA.svg?branch=main
 ## Code Status
 
 with coveralls.io
