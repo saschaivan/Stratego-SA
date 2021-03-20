@@ -9,7 +9,6 @@ Build status of continus integration with travis
 
 [![Build Status](https://travis-ci.com/saschaivan/Stratego-SA.svg?branch=main)](https://travis-ci.com/github/saschaivan/Stratego-SA)
 
-https://travis-ci.com/saschaivan/Stratego-SA.svg?branch=main
 ## Code Status
 
 with coveralls.io
