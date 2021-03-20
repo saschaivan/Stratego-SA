@@ -65,25 +65,26 @@ class SetFrame(controller:ControllerInterface) extends Frame {
 
   val buttonPanel = new BorderPanel {
     add(initializeButton, BorderPanel.Position.Center)
-    border = BorderFactory.createEmptyBorder(300,0,10,0)
+    border = BorderFactory.createEmptyBorder(10,0,10,0)
   }
 
-  val message = new Label{
-    text= "<html>"+ "Welcome to STRATEGO!<br><br> " + controller.playerList(0).toString + " it's your turn. " +
-      "Set your figures on the blue fields with following keystrokes:<br><br>" +
-      "Bomb        (\uD83D\uDCA3) with B<br>" +
-      "Marshal     (\uD83D\uDC82) with M<br>" +
-      "General     (9) with 9<br>" +
-      "Colonel     (8) with 8<br>" +
-      "Major       (7) with 7<br>" +
-      "Captain     (6) with 6<br>" +
-      "Lieutenant  (5) with 5<br>" +
-      "Sergeant    (4) with 4<br>" +
-      "Miner       (3) with 3<br>" +
-      "Scout       (2) with 2<br>" +
-      "Spy         (1) with 1<br>" +
-      "Flag        (\uD83C\uDFF3) with F<br><br>"+
-      "The figures can also be set automatically by pressing the button below \uD83D\uDC47</html>"
+  val message = new TextPane {
+    text= "Welcome to STRATEGO!\n" + controller.playerList(0).toString + " it's your turn. " +
+      "Set your figures on the blue fields with following keystrokes:\n" +
+      "Bomb (\uD83D\uDCA3) with B\t" +
+      "Marshal (\uD83D\uDC82) with M\n" +
+      "General (9) with 9\t" +
+      "Colonel (8) with 8\n" +
+      "Major (7) with 7\t" +
+      "Captain (6) with 6\n" +
+      "Lieutenant (5) with 5\t" +
+      "Sergeant (4) with 4\n" +
+      "Miner (3) with 3\t" +
+      "Scout (2) with 2\n" +
+      "Spy (1) with 1\t" +
+      "Flag (\uD83C\uDFF3) with F\n"+
+      "The figures can also be set automatically by pressing the button below \uD83D\uDC47"
+    editable = false
     foreground= defaultColor
     font = legendFont
   }
@@ -96,7 +97,7 @@ class SetFrame(controller:ControllerInterface) extends Frame {
     contents += messagePanel
     contents += buttonPanel
     border = BorderFactory.createEmptyBorder(0,15,0,0)
-    preferredSize = new Dimension(400, 100)
+    preferredSize = new Dimension(600, 400)
   }
 
   val mainPanel = new BorderPanel{
@@ -153,20 +154,20 @@ class SetFrame(controller:ControllerInterface) extends Frame {
       *
        */
 
-      message.text= "<html>"+ controller.playerList(1).toString + " now it's your turn. " +
+      message.text= controller.playerList(1).toString + " now it's your turn. " +
         "Set your figures on the red fields with following keystrokes:<br><br>" +
-        "Bomb        (\uD83D\uDCA3) with B<br>" +
-        "Marshal     (\uD83D\uDC82) with M<br>" +
-        "General     (9) with 9<br>" +
-        "Colonel     (8) with 8<br>" +
-        "Major       (7) with 7<br>" +
-        "Captain     (6) with 6<br>" +
-        "Lieutenant  (5) with 5<br>" +
-        "Sergeant    (4) with 4<br>" +
-        "Miner       (3) with 3<br>" +
-        "Scout       (2) with 2<br>" +
-        "Spy         (1) with 1<br>" +
-        "Flag        (\uD83C\uDFF3) with F"+
+        "Bomb (\uD83D\uDCA3) with B\t" +
+        "Marshal (\uD83D\uDC82) with M\n" +
+        "General (9) with 9\t" +
+        "Colonel (8) with 8\n" +
+        "Major (7) with 7\t" +
+        "Captain (6) with 6\n" +
+        "Lieutenant (5) with 5\t" +
+        "Sergeant (4) with 4\n" +
+        "Miner (3) with 3\t" +
+        "Scout (2) with 2\n" +
+        "Spy (1) with 1\t" +
+        "Flag (\uD83C\uDFF3) with F\n"+
         "</html>"
 
   }
