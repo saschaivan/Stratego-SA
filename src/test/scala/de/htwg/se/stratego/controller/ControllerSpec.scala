@@ -47,7 +47,7 @@ class ControllerSpec extends WordSpec with Matchers {
         controller.set(3,3,"6") should be ("")
         controller.set(3,0,"F") should be ("")
         controller.set(3,1,"9") should be ("")
-        controller.set(3,2,"8") should be ("Move Figures with (m direction[u,d,r,l] row col) or attack with (a row col row col)\nPlayerBlue it's your turn!")
+        controller.set(3,2,"8") should be ("")
 
         controller2.currentPlayerIndex = 0
         controller2.set(3,3,"6") should be ("")
@@ -86,7 +86,7 @@ class ControllerSpec extends WordSpec with Matchers {
         controller3.attack(3,3,2,3) should be("")
       }
       "can get matchfield as matrix" in {
-        controller.getField.toString should be ("Matrix(Vector(Vector(F, 9, 8, 6), Vector( ,  ,  ,  ), Vector( ,  ,  ,  ), Vector(F, 9, 8, 6)))")
+        controller.getField.toString should be ("Matrix(Vector(Vector(F, 9, 8, 6), Vector( ,  ,  ,  ), Vector( ,  ,  ,  ), Vector( ,  ,  ,  )))")
       }
       "can get status as string" in {
         controller.statusString should be ("")
