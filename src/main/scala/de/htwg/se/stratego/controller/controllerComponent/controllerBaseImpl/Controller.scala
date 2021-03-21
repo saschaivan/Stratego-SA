@@ -40,11 +40,20 @@ class Controller @Inject()(var matchField:MatchFieldInterface) extends Controlle
   }
 
   def setPlayers(input: String): String = {
-    for (i <- game.setPlayers(input))
+    for (i <- setPlayer(input))
       playerListBuffer.append(i)
     nextState
     publish(new PlayerChanged)
     ""
+  }
+
+  def setPlayer(input: String): List[Player] = {
+    input.split(" ").map(_.trim).toList match{
+      case player1 :: player2 :: Nil =>
+        val Game = game.copy(playerA = Player(player1, game.bList), playerB = Player(player2, game.rList), size = game.size, matchField = matchField)
+        val playerList = List[Player](Game.playerA, Game.playerB)
+        playerList
+    }
   }
 
   def createEmptyMatchfield(size:Int): String = {
@@ -190,7 +199,7 @@ class Controller @Inject()(var matchField:MatchFieldInterface) extends Controlle
     val (newmatchField, newPlayerIndex, newPlayers) = fileIO.load
     matchField = newmatchField
     currentPlayerIndex = newPlayerIndex
-    for (i <- game.setPlayers(newPlayers))
+    for (i <- setPlayer(newPlayers))
       playerListBuffer.append(i)
     state = GameState(this)
     publish(new FieldChanged)

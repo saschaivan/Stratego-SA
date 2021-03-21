@@ -2,9 +2,9 @@ package de.htwg.se.stratego.model.matchFieldComponent.matchFieldBaseImpl
 import de.htwg.se.stratego.model.matchFieldComponent.MatchFieldInterface
 import de.htwg.se.stratego.model.playerComponent.Player
 
-case class Game(var playerA: Player, var playerB: Player, size: Int, var matchField: MatchFieldInterface) {
-  var bList = playerA.characterList
-  var rList = playerB.characterList
+case class Game(playerA: Player, playerB: Player, size: Int, var matchField: MatchFieldInterface) {
+  val bList: Seq[GameCharacter] = playerA.characterList
+  val rList: Seq[GameCharacter] = playerB.characterList
 
   def init(currentMatchField: MatchFieldInterface): MatchFieldInterface = {
     var bIdx = 0
@@ -61,7 +61,7 @@ case class Game(var playerA: Player, var playerB: Player, size: Int, var matchFi
     if (isBlueChar(charac) && isBlueField(row) && !matchField.fields.field(row,col).isSet) {
       val idx = bList.indexOf(GameCharacter(Figure.FigureVal(charac,characValue(charac))))
       matchField = matchField.addChar(row,col,bList(idx),Colour.FigureCol(0))
-      bList = bList.patch(idx, Nil, 1)
+      bList.patch(idx, Nil, 1)
       return matchField
     }
     matchField
@@ -88,7 +88,7 @@ case class Game(var playerA: Player, var playerB: Player, size: Int, var matchFi
     if (isRedChar(charac) && isRedField(row) && !matchField.fields.field(row,col).isSet) {
       val idx = rList.indexOf(GameCharacter(Figure.FigureVal(charac,characValue(charac))))
       matchField = matchField.addChar(row,col,rList(idx),Colour.FigureCol(1))
-      rList = rList.patch(idx, Nil, 1)
+      rList.patch(idx, Nil, 1)
       return matchField
     }
     matchField
@@ -118,16 +118,6 @@ case class Game(var playerA: Player, var playerB: Player, size: Int, var matchFi
           }
       }
     true
-    }
-
-  def setPlayers(input: String): List[Player] = {
-    input.split(" ").map(_.trim).toList match{
-      case player1 :: player2 :: Nil =>
-        playerA = playerA.copy(player1, bList)
-        playerB = playerA.copy(player2, rList)
-        val playerList = List[Player](playerA,playerB)
-        playerList
-    }
   }
 
   def move(direction: Char, matchField: MatchFieldInterface, row: Int, col: Int, currentPlayerIndex: Int): MatchFieldInterface = {
@@ -188,25 +178,31 @@ case class Game(var playerA: Player, var playerB: Player, size: Int, var matchFi
       def strategy7:MatchFieldInterface = matchField.removeChar(rowA, colA)
       def strategy8:MatchFieldInterface = matchField.removeChar(rowA, colA).removeChar(rowD, colD)
 
-      val fieldIsSet = if(matchField.fields.field(rowA, colA).isSet.equals(false) ||
-        matchField.fields.field(rowD, colD).isSet.equals(false)) return strategy1
-      val attackIsValid = if(matchField.fields.field(rowD,colD).colour.get.value == currentPlayerIndex &&
+      // is field set
+      if(matchField.fields.field(rowA, colA).isSet.equals(false) || matchField.fields.field(rowD, colD).isSet.equals(false)) return strategy1
+      // is attack valid
+      if(matchField.fields.field(rowD,colD).colour.get.value == currentPlayerIndex &&
         matchField.fields.field(rowA,colA).colour.get.value == currentPlayerIndex) return strategy1
-      val enemyAttackIsInValid = if(matchField.fields.field(rowD,colD).colour.get.value != currentPlayerIndex &&
+      // is enemy attack invalid
+      if(matchField.fields.field(rowD,colD).colour.get.value != currentPlayerIndex &&
         matchField.fields.field(rowA,colA).colour.get.value != currentPlayerIndex) return strategy1
-      val wrongPlayerAttack = if(matchField.fields.field(rowD,colD).colour.get.value == currentPlayerIndex &&
+      // is player attack wrong
+      if(matchField.fields.field(rowD,colD).colour.get.value == currentPlayerIndex &&
         matchField.fields.field(rowA,colA).colour.get.value != currentPlayerIndex) return strategy1
-      val attackToFarAway = if(((Math.abs(rowA-rowD)>1)||(Math.abs(colA-colD)>1))||((Math.abs(rowA-rowD)==1) &&
-        (Math.abs(colA-colD)==1))) return strategy1
-      val isFlagOrBomb = if(matchField.fields.field(rowA,colA).character.get.figure.value == 0 ||
-        matchField.fields.field(rowA,colA).character.get.figure.value == 11) return strategy1
-      val minerAttackTheBomb = if(figureHasValue(matchField, rowA, colA) == 3 &&
-        figureHasValue(matchField, rowD, colD) == 11) return strategy6
-      val spyAttackMarshal = if((figureHasValue(matchField, rowA,colA) == 1) &&
-        (figureHasValue(matchField, rowD, colD) == 10)) return strategy3
-      val defenceIsStronger = if (figureHasValue(matchField, rowA,colA) < figureHasValue(matchField,rowD, colD)) return strategy7
-      val attackIsStronger = if(figureHasValue(matchField, rowA,colA) > figureHasValue(matchField,rowD, colD)) return strategy3
-      val attackEqualsDefence = if(figureHasValue(matchField, rowA,colA) == figureHasValue(matchField,rowD, colD)) return strategy8
+      // is attack far away
+      if(((Math.abs(rowA-rowD)>1)||(Math.abs(colA-colD)>1))||((Math.abs(rowA-rowD)==1) && (Math.abs(colA-colD)==1))) return strategy1
+      // is flag or bomb
+      if(matchField.fields.field(rowA,colA).character.get.figure.value == 0 || matchField.fields.field(rowA,colA).character.get.figure.value == 11) return strategy1
+      // does the miner attack bomb
+      if(figureHasValue(matchField, rowA, colA) == 3 && figureHasValue(matchField, rowD, colD) == 11) return strategy6
+      // does the spy attack marshal
+      if((figureHasValue(matchField, rowA,colA) == 1) && (figureHasValue(matchField, rowD, colD) == 10)) return strategy3
+      // is defense stronger
+      if (figureHasValue(matchField, rowA,colA) < figureHasValue(matchField,rowD, colD)) return strategy7
+      // is attack stronger
+      if(figureHasValue(matchField, rowA,colA) > figureHasValue(matchField,rowD, colD)) return strategy3
+      // does attack equal defense
+      if(figureHasValue(matchField, rowA,colA) == figureHasValue(matchField,rowD, colD)) return strategy8
       matchField
     }
   }
