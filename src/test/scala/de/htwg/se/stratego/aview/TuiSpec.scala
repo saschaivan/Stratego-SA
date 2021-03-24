@@ -13,7 +13,7 @@ class TuiSpec  extends WordSpec with Matchers{
 
     "create and empty Matchfield on input 'n'" in {
       tui.processInputLine("n")
-      controller.matchField should be(new MatchField(4, 4, false))
+      controller.game.matchField should be(new MatchField(4, 4, false))
     }
     "quit" in {
       tui.processInputLine("q")

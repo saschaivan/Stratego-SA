@@ -7,10 +7,9 @@ import de.htwg.se.stratego.model.fileIoComponent.FileIOInterface
 import de.htwg.se.stratego.model.matchFieldComponent.MatchFieldInterface
 import de.htwg.se.stratego.model.matchFieldComponent.matchFieldAvancedImpl.MatchField
 import net.codingwell.scalaguice.ScalaModule
-import de.htwg.se.stratego.model.fileIoComponent._
 import de.htwg.se.stratego.model.fileIoComponent.fileIoJsonImpl.FileIO
 
-class StrategoModule extends AbstractModule with ScalaModule{
+class StrategoModule extends AbstractModule with ScalaModule {
 
   val defaultSize:Int = 4
   val defaultSet:Boolean = false

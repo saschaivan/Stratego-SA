@@ -2,30 +2,30 @@ package de.htwg.se.stratego.model.matchFieldComponent.matchFieldBaseImpl
 import de.htwg.se.stratego.model.matchFieldComponent.MatchFieldInterface
 import de.htwg.se.stratego.model.playerComponent.Player
 
-case class Game(playerA: Player, playerB: Player, size: Int, var matchField: MatchFieldInterface) {
+case class Game(playerA: Player, playerB: Player, size: Int, matchField: MatchFieldInterface ) {
   val bList: Seq[GameCharacter] = playerA.characterList
   val rList: Seq[GameCharacter] = playerB.characterList
 
-  def init(currentMatchField: MatchFieldInterface): MatchFieldInterface = {
+  def init(currentMatchField: MatchFieldInterface): Game = {
     var bIdx = 0
     var rIdx = 0
-    for { row <- 0 until matchField.fields.matrixSize
-          col <- 0 until matchField.fields.matrixSize }
-    {
-      if (currentMatchField.fields.field(row,col).isSet) {
-        return currentMatchField
+    var field: MatchFieldInterface = matchField
+    for {row <- 0 until matchField.fields.matrixSize
+         col <- 0 until matchField.fields.matrixSize} {
+      if (currentMatchField.fields.field(row, col).isSet) {
+        field = currentMatchField
       }
-      if(isBlueField(col)) {
-        matchField = matchField.addChar(col, row, bList(bIdx),Colour.FigureCol(0))
-        bIdx+=1
+      if (isBlueField(col)) {
+        field = field.addChar(col, row, bList(bIdx), Colour.FigureCol(0))
+        bIdx += 1
       } else if (isRedField(col)) {
-        matchField = matchField.addChar(col, row, rList(rIdx),Colour.FigureCol(1))
-        rIdx+=1
+        field = field.addChar(col, row, rList(rIdx), Colour.FigureCol(1))
+        rIdx += 1
       } else {
 
       }
     }
-    matchField
+    copy(matchField = field)
   }
 
   def characValue(charac:String): Int = {
@@ -60,7 +60,7 @@ case class Game(playerA: Player, playerB: Player, size: Int, var matchField: Mat
   def setBlue(row:Int, col:Int, charac: String): MatchFieldInterface = {
     if (isBlueChar(charac) && isBlueField(row) && !matchField.fields.field(row,col).isSet) {
       val idx = bList.indexOf(GameCharacter(Figure.FigureVal(charac,characValue(charac))))
-      matchField = matchField.addChar(row,col,bList(idx),Colour.FigureCol(0))
+      matchField.addChar(row,col,bList(idx),Colour.FigureCol(0))
       bList.patch(idx, Nil, 1)
       return matchField
     }
@@ -87,7 +87,7 @@ case class Game(playerA: Player, playerB: Player, size: Int, var matchField: Mat
   def setRed(row:Int, col:Int, charac: String): MatchFieldInterface = {
     if (isRedChar(charac) && isRedField(row) && !matchField.fields.field(row,col).isSet) {
       val idx = rList.indexOf(GameCharacter(Figure.FigureVal(charac,characValue(charac))))
-      matchField = matchField.addChar(row,col,rList(idx),Colour.FigureCol(1))
+      matchField.addChar(row,col,rList(idx),Colour.FigureCol(1))
       rList.patch(idx, Nil, 1)
       return matchField
     }

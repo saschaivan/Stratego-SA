@@ -1,6 +1,7 @@
 package de.htwg.se.stratego.controller.controllerComponent
 
 import de.htwg.se.stratego.controller.controllerComponent.GameStatus.GameStatus
+import de.htwg.se.stratego.model.matchFieldComponent.MatchFieldInterface
 import de.htwg.se.stratego.model.matchFieldComponent.matchFieldBaseImpl.{Field, Matrix}
 import de.htwg.se.stratego.model.playerComponent.Player
 

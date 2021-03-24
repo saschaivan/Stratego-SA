@@ -3,10 +3,10 @@ package de.htwg.se.stratego.model.fileIoComponent.fileIoJsonImpl
 import com.google.inject.Guice
 import de.htwg.se.stratego.StrategoModule
 import de.htwg.se.stratego.model.fileIoComponent.FileIOInterface
-import de.htwg.se.stratego.model.matchFieldComponent.{FieldInterface, MatchFieldInterface}
+import de.htwg.se.stratego.model.matchFieldComponent.MatchFieldInterface
 import de.htwg.se.stratego.model.matchFieldComponent.matchFieldBaseImpl.{Colour, Figure, GameCharacter}
 import de.htwg.se.stratego.model.playerComponent.Player
-import play.api.libs.json.{JsNumber, JsValue, Json, Writes}
+import play.api.libs.json.{JsNumber, JsValue, Json}
 
 import scala.io.Source
 

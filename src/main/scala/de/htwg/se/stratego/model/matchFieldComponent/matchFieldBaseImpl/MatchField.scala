@@ -1,6 +1,6 @@
 package de.htwg.se.stratego.model.matchFieldComponent.matchFieldBaseImpl
 
-import com.google.inject.{Guice, Inject, Injector}
+import com.google.inject.{Inject}
 import de.htwg.se.stratego.model.matchFieldComponent.MatchFieldInterface
 
 case class MatchField @Inject() (fields: Matrix[Field]) extends MatchFieldInterface {

@@ -13,7 +13,7 @@ import scala.collection.mutable.ListBuffer
 import scala.swing.Publisher
 
 
-class Controller @Inject()(var matchField:MatchFieldInterface) extends ControllerInterface with Publisher {
+class Controller @Inject()(matchField:MatchFieldInterface) extends ControllerInterface with Publisher {
 
   val injector = Guice.createInjector(new StrategoModule)
   val fileIO = injector.getInstance(classOf[FileIOInterface])
@@ -21,7 +21,7 @@ class Controller @Inject()(var matchField:MatchFieldInterface) extends Controlle
   val list = CharacterList(matchField.fields.matrixSize)
   val playerBlue = Player("PlayerBlue", list.getCharacterList())
   val playerRed = Player("PlayerRed", list.getCharacterList())
-  val game = Game(playerBlue, playerRed, matchField.fields.matrixSize, matchField)
+  var game = Game(playerBlue, playerRed, matchField.fields.matrixSize, matchField)
   val playerList = List[Player](playerBlue, playerRed)
   val playerListBuffer: ListBuffer[Player] = ListBuffer.empty
 
@@ -40,8 +40,15 @@ class Controller @Inject()(var matchField:MatchFieldInterface) extends Controlle
   }
 
   def setPlayers(input: String): String = {
-    for (i <- setPlayer(input))
-      playerListBuffer.append(i)
+    // allowed size of playerlistbuffer is 2, otherwise clear it
+    for (i <- setPlayer(input)) {
+      if (playerListBuffer.size != 2)
+        playerListBuffer.append(i)
+      else {
+        playerListBuffer.clear()
+        playerListBuffer.append(i)
+      }
+    }
     nextState
     publish(new PlayerChanged)
     ""
@@ -57,8 +64,7 @@ class Controller @Inject()(var matchField:MatchFieldInterface) extends Controlle
   }
 
   def createEmptyMatchfield(size:Int): String = {
-    matchField = new MatchField(size, size, false)
-    game.copy(playerBlue,playerRed,size,matchField)
+    game = game.copy(playerBlue, playerRed, size, new MatchField(size, size, false))
     gameStatus=NEW
     state = EnterPlayer(this)
     publish(new NewGame)
@@ -68,11 +74,11 @@ class Controller @Inject()(var matchField:MatchFieldInterface) extends Controlle
 
   def initMatchfield(): String = {
     var newMatchField = matchField
-    newMatchField = game.init(matchField)
+    newMatchField = game.init(matchField).matchField
     if (matchField.equals(newMatchField)) {
       ""
     } else {
-      matchField = game.init(matchField)
+      game = game.copy(matchField = game.init(matchField).matchField)
       gameStatus=INIT
       nextState
       publish(new MachtfieldInitialized)
@@ -81,20 +87,20 @@ class Controller @Inject()(var matchField:MatchFieldInterface) extends Controlle
   }
 
   def attack(rowA: Int, colA: Int, rowD:Int, colD:Int): String ={
-    if(game.onlyBombAndFlag(matchField,currentPlayerIndex) && matchField.fields.field(rowA,colA).isSet &&
-      matchField.fields.field(rowA,colA).colour.get.value==currentPlayerIndex) {
+    if(game.onlyBombAndFlag(game.matchField,currentPlayerIndex) && game.matchField.fields.field(rowA,colA).isSet &&
+      game.matchField.fields.field(rowA,colA).colour.get.value==currentPlayerIndex) {
       currentPlayerIndex = nextPlayer
       publish(new GameFinished)
       currentPlayerIndex=1
       nextState
-      createEmptyMatchfield(matchField.fields.matrixSize)
+      createEmptyMatchfield(game.matchField.fields.matrixSize)
       return "Congratulations " + playerList(currentPlayerIndex) +"! You're the winner!\n" +
         "Game finished! Play new Game with (n)!"
     }
-    if(rowD <= matchField.fields.matrixSize - 1 && rowD >= 0 && colD >= 0 && colD <= matchField.fields.matrixSize - 1 &&
-      matchField.fields.field(rowA, colA).isSet.equals(true) && matchField.fields.field(rowD, colD).isSet.equals(true)
-      && matchField.fields.field(rowD,colD).colour.get.value!= currentPlayerIndex &&
-      matchField.fields.field(rowD,colD).character.get.figure.value==0){
+    if(rowD <= game.matchField.fields.matrixSize - 1 && rowD >= 0 && colD >= 0 && colD <= game.matchField.fields.matrixSize - 1 &&
+      game.matchField.fields.field(rowA, colA).isSet.equals(true) && game.matchField.fields.field(rowD, colD).isSet.equals(true)
+      && game.matchField.fields.field(rowD,colD).colour.get.value!= currentPlayerIndex &&
+      game.matchField.fields.field(rowD,colD).character.get.figure.value==0) {
       publish(new GameFinished)
       currentPlayerIndex=1
       nextState
@@ -102,10 +108,10 @@ class Controller @Inject()(var matchField:MatchFieldInterface) extends Controlle
       return "Congratulations " + playerList(currentPlayerIndex) +"! You're the winner!\n" +
         "Game finished! Play new Game with (n)!"
     }
-    if (rowD <= matchField.fields.matrixSize - 1 && rowD >= 0 && colD >= 0 && colD <= matchField.fields.matrixSize - 1 &&
-      matchField.fields.field(rowA,colA).isSet && matchField.fields.field(rowA,colA).colour.get.value==currentPlayerIndex
-      && matchField.fields.field(rowD,colD).isSet && matchField.fields.field(rowD,colD).colour.get.value!= currentPlayerIndex) {
-      matchField = game.Context.attack(matchField, rowA, colA, rowD, colD,currentPlayerIndex)
+    if (rowD <= game.matchField.fields.matrixSize - 1 && rowD >= 0 && colD >= 0 && colD <= game.matchField.fields.matrixSize - 1 &&
+      game.matchField.fields.field(rowA,colA).isSet && game.matchField.fields.field(rowA,colA).colour.get.value==currentPlayerIndex
+      && game.matchField.fields.field(rowD,colD).isSet && game.matchField.fields.field(rowD,colD).colour.get.value!= currentPlayerIndex) {
+      game = game.copy(matchField = game.Context.attack(game.matchField, rowA, colA, rowD, colD,currentPlayerIndex))
       gameStatus = ATTACK
       currentPlayerIndex= nextPlayer
       publish(new PlayerSwitch)
@@ -142,18 +148,18 @@ class Controller @Inject()(var matchField:MatchFieldInterface) extends Controlle
   }
 
   def move(dir: Char, row:Int, col:Int): String = {
-    if (matchField.fields.field(row,col).isSet && matchField.fields.field(row,col).colour.get.value==currentPlayerIndex) {
-      if(game.onlyBombAndFlag(matchField,currentPlayerIndex)) {
+    if (game.matchField.fields.field(row,col).isSet && game.matchField.fields.field(row,col).colour.get.value==currentPlayerIndex) {
+      if(game.onlyBombAndFlag(game.matchField,currentPlayerIndex)) {
         currentPlayerIndex = nextPlayer
         publish(new GameFinished)
         currentPlayerIndex=1
         nextState
-        createEmptyMatchfield(matchField.fields.matrixSize)
+        createEmptyMatchfield(game.matchField.fields.matrixSize)
         return "Congratulations " + playerList(currentPlayerIndex) +"! You're the winner!\n" +
           "Game finished! Play new Game with (n)!"
       }
-      undoManager.doStep(new MoveCommand(dir, matchField, row, col, currentPlayerIndex, this))
-      if (!matchField.fields.field(row,col).isSet) {
+      undoManager.doStep(new MoveCommand(dir, game.matchField, row, col, currentPlayerIndex, this))
+      if (!game.matchField.fields.field(row,col).isSet) {
         currentPlayerIndex = nextPlayer
         publish(new FieldChanged)
         publish(new PlayerSwitch)
@@ -191,13 +197,13 @@ class Controller @Inject()(var matchField:MatchFieldInterface) extends Controlle
 
   def nextPlayer: Int = if (currentPlayerIndex == 0) 1 else 0
 
-  override def getSize: Int = matchField.fields.matrixSize
+  override def getSize: Int = game.matchField.fields.matrixSize
 
-  override def getField: Matrix[Field] = matchField.fields
+  override def getField: Matrix[Field] = game.matchField.fields
 
   override def load: String = {
     val (newmatchField, newPlayerIndex, newPlayers) = fileIO.load
-    matchField = newmatchField
+    game = game.copy(matchField = newmatchField)
     currentPlayerIndex = newPlayerIndex
     for (i <- setPlayer(newPlayers))
       playerListBuffer.append(i)
@@ -207,7 +213,8 @@ class Controller @Inject()(var matchField:MatchFieldInterface) extends Controlle
   }
 
   override def save: String = {
-    fileIO.save(matchField, currentPlayerIndex, playerList)
+    val players = if (playerListBuffer.isEmpty) playerList else playerListBuffer.toList
+    fileIO.save(game.matchField, currentPlayerIndex, players)
     publish(new FieldChanged)
     "save"
   }

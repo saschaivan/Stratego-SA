@@ -15,5 +15,4 @@ trait FieldInterface{
   def isSet:Boolean
   def character: Option[GameCharacter]
   def colour: Option[Colour.FigureCol]
-
 }

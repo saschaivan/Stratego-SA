@@ -4,7 +4,7 @@ import com.google.inject.Guice
 import de.htwg.se.stratego.StrategoModule
 import de.htwg.se.stratego.model.fileIoComponent.FileIOInterface
 import de.htwg.se.stratego.model.matchFieldComponent.MatchFieldInterface
-import de.htwg.se.stratego.model.matchFieldComponent.matchFieldBaseImpl.{Colour, Figure, GameCharacter}
+import de.htwg.se.stratego.model.matchFieldComponent.matchFieldBaseImpl.{Colour, Figure, Game, GameCharacter}
 import de.htwg.se.stratego.model.playerComponent.Player
 
 import scala.xml.PrettyPrinter
@@ -25,11 +25,10 @@ class FileIO extends FileIOInterface{
       val figName: String = (field\ "@figName").text
       val figValue: Int = (field\ "@figValue").text.toInt
       val colour:Int = (field\ "@colour").text.toInt
-      matchField = matchField.addChar(row, col, new GameCharacter(Figure.FigureVal(figName,figValue)),
+      matchField = matchField.addChar(row, col, GameCharacter(Figure.FigureVal(figName,figValue)),
         Colour.FigureCol(colour))
     }
     (matchField, currentPlayerIndex,playerS)
-
   }
 
   def cellToXml(matchField: MatchFieldInterface, row: Int, col: Int) = {

@@ -271,7 +271,11 @@ class GameFrame(controller:ControllerInterface) extends Frame{
     case event: FieldChanged     => redraw
     case event: GameFinished     =>
       JOptionPane.showMessageDialog(null,
-        controller.playerList(controller.currentPlayerIndex) + " you have won the game!")
+        if(controller.playerListBuffer.isEmpty)
+          controller.playerList(controller.currentPlayerIndex)
+        else
+          controller.playerListBuffer(controller.currentPlayerIndex)
+            + " you have won the game!")
       visible = false
       deafTo(controller)
       close()

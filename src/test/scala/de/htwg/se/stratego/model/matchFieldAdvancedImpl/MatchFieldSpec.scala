@@ -1,6 +1,5 @@
 package de.htwg.se.stratego.model.matchFieldAdvancedImpl
-
-import de.htwg.se.stratego.model.matchFieldComponent.matchFieldAvancedImpl.MatchField
+import de.htwg.se.stratego.model.matchFieldComponent.matchFieldBaseImpl.MatchField
 import org.scalatest.{Matchers, WordSpec}
 
 class MatchFieldSpec extends WordSpec with Matchers{
