@@ -67,7 +67,7 @@ class FileIO extends FileIOInterface{
   override def save(matchField: MatchFieldInterface, currentPlayerIndex: Int, players: List[Player]): Unit = {
     import java.io._
     val pw = new PrintWriter(new File("matchField.json"))
-    val playerS = players(0) + " "+ players(1)
+    val playerS = players(0) + " " + players(1)
     pw.write(Json.prettyPrint(matchFieldToJson(matchField, currentPlayerIndex, playerS)))
     pw.close()
   }
