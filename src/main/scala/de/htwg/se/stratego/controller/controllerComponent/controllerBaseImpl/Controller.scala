@@ -74,11 +74,13 @@ class Controller @Inject()(matchField:MatchFieldInterface) extends ControllerInt
 
   def initMatchfield(): String = {
     var newMatchField = matchField
-    newMatchField = game.init(matchField).matchField
+    newMatchField = game.init(matchField, 0, 0, 0, 0).matchField
+    //newMatchField = game.init(matchField).matchField
     if (matchField.equals(newMatchField)) {
       ""
     } else {
-      game = game.copy(matchField = game.init(matchField).matchField)
+      game = game.copy(matchField = game.init(matchField, 0, 0, 0, 0).matchField)
+      //game = game.copy(matchField = game.init(matchField).matchField)
       gameStatus=INIT
       nextState
       publish(new MachtfieldInitialized)
@@ -87,7 +89,7 @@ class Controller @Inject()(matchField:MatchFieldInterface) extends ControllerInt
   }
 
   def attack(rowA: Int, colA: Int, rowD:Int, colD:Int): String ={
-    if(game.onlyBombAndFlag(game.matchField,currentPlayerIndex) && game.matchField.fields.field(rowA,colA).isSet &&
+    if(game.onlyBombAndFlag(game.matchField,currentPlayerIndex,0,0) && game.matchField.fields.field(rowA,colA).isSet &&
       game.matchField.fields.field(rowA,colA).colour.get.value==currentPlayerIndex) {
       currentPlayerIndex = nextPlayer
       publish(new GameFinished)
@@ -97,10 +99,7 @@ class Controller @Inject()(matchField:MatchFieldInterface) extends ControllerInt
       return "Congratulations " + playerList(currentPlayerIndex) +"! You're the winner!\n" +
         "Game finished! Play new Game with (n)!"
     }
-    if(rowD <= game.matchField.fields.matrixSize - 1 && rowD >= 0 && colD >= 0 && colD <= game.matchField.fields.matrixSize - 1 &&
-      game.matchField.fields.field(rowA, colA).isSet.equals(true) && game.matchField.fields.field(rowD, colD).isSet.equals(true)
-      && game.matchField.fields.field(rowD,colD).colour.get.value!= currentPlayerIndex &&
-      game.matchField.fields.field(rowD,colD).character.get.figure.value==0) {
+    if(game.flagFound(rowD, colD, rowA, rowD, currentPlayerIndex)) {
       publish(new GameFinished)
       currentPlayerIndex=1
       nextState
@@ -108,9 +107,7 @@ class Controller @Inject()(matchField:MatchFieldInterface) extends ControllerInt
       return "Congratulations " + playerList(currentPlayerIndex) +"! You're the winner!\n" +
         "Game finished! Play new Game with (n)!"
     }
-    if (rowD <= game.matchField.fields.matrixSize - 1 && rowD >= 0 && colD >= 0 && colD <= game.matchField.fields.matrixSize - 1 &&
-      game.matchField.fields.field(rowA,colA).isSet && game.matchField.fields.field(rowA,colA).colour.get.value==currentPlayerIndex
-      && game.matchField.fields.field(rowD,colD).isSet && game.matchField.fields.field(rowD,colD).colour.get.value!= currentPlayerIndex) {
+    if (game.attackValid(rowD, colD, rowA, colA, currentPlayerIndex)) {
       game = game.copy(matchField = game.Context.attack(game.matchField, rowA, colA, rowD, colD,currentPlayerIndex))
       gameStatus = ATTACK
       currentPlayerIndex= nextPlayer
@@ -149,7 +146,7 @@ class Controller @Inject()(matchField:MatchFieldInterface) extends ControllerInt
 
   def move(dir: Char, row:Int, col:Int): String = {
     if (game.matchField.fields.field(row,col).isSet && game.matchField.fields.field(row,col).colour.get.value==currentPlayerIndex) {
-      if(game.onlyBombAndFlag(game.matchField,currentPlayerIndex)) {
+      if(game.onlyBombAndFlag(game.matchField,currentPlayerIndex,0,0)) {
         currentPlayerIndex = nextPlayer
         publish(new GameFinished)
         currentPlayerIndex=1

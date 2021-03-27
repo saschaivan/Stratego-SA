@@ -37,6 +37,3 @@ val game = Game(playerBlue, playerRed, 4, matchField)
 
 
 
-
-
-
