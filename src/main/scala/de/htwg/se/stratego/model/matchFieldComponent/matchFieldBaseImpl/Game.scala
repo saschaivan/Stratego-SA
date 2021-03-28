@@ -3,9 +3,11 @@ package de.htwg.se.stratego.model.matchFieldComponent.matchFieldBaseImpl
 import de.htwg.se.stratego.model.matchFieldComponent.MatchFieldInterface
 import de.htwg.se.stratego.model.playerComponent.Player
 
+import scala.collection.mutable.ListBuffer
+
 case class Game(playerA: Player, playerB: Player, size: Int, matchField: MatchFieldInterface) {
-  val bList: Seq[GameCharacter] = playerA.characterList
-  val rList: Seq[GameCharacter] = playerB.characterList
+  val bList: ListBuffer[GameCharacter] = playerA.characterList
+  val rList: ListBuffer[GameCharacter] = playerB.characterList
 
   /*def init(currentMatchField: MatchFieldInterface): Game = {
     var bIdx = 0
@@ -96,10 +98,19 @@ case class Game(playerA: Player, playerB: Player, size: Int, matchField: MatchFi
     }
     matchField
   }*/
-
-  def setBlue(row: Int, col: Int, charac: String): MatchFieldInterface = {
-    setRed(bList, Colour.FigureCol(0))(row, col, charac)
+  def setBlue(row:Int, col:Int, charac: String): Game = {
+    var field: MatchFieldInterface = matchField
+    if (isBlueChar(charac) && isBlueField(row) && !field.fields.field(row,col).isSet) {
+      val idx = bList.indexOf(GameCharacter(Figure.FigureVal(charac,characValue(charac))))
+      field = matchField.addChar(row,col,bList(idx),Colour.FigureCol(0))
+      bList.remove(idx)
+      return copy(matchField = field)
+    }
+    copy(matchField = field)
   }
+  /*def setBlue(row: Int, col: Int, charac: String): MatchFieldInterface = {
+    setRed(bList, Colour.FigureCol(0))(row, col, charac)
+  }*/
 
 
   // (color: Colour)
@@ -118,23 +129,24 @@ case class Game(playerA: Player, playerB: Player, size: Int, matchField: MatchFi
     isRedChar(bList)(charac)
   }
 
-  def set(player: Int, row: Int, col: Int, charac: String): MatchFieldInterface = {
+  def set(player: Int, row: Int, col: Int, charac: String): Game = {
     player match {
       case 0 => return setBlue(row, col, charac)
-      case 1 => return setRed(rList, Colour.FigureCol(1))(row, col, charac)
+      case 1 => return setRed(row, col, charac)
     }
-    matchField
+    copy(matchField = matchField)
   }
 
   // TODO parameter direkt übergeben und statt FigureCol(1) RED setzen
-  def setRed(seq: Seq[GameCharacter], colour: Colour.FigureCol)(row: Int, col: Int, charac: String): MatchFieldInterface = {
-    if (isRedChar(rList)(charac) && isRedField(row) && !matchField.fields.field(row, col).isSet) {
+  def setRed(row: Int, col: Int, charac: String): Game = {
+    var field: MatchFieldInterface = matchField
+    if (isRedChar(rList)(charac) && isRedField(row) && !field.fields.field(row, col).isSet) {
       val idx = rList.indexOf(GameCharacter(Figure.FigureVal(charac, characValue(charac))))
-      matchField.addChar(row, col, rList(idx), Colour.FigureCol(1))
-      rList.patch(idx, Nil, 1)
-      return matchField
+      field = matchField.addChar(row, col, rList(idx), Colour.FigureCol(1))
+      rList.remove(idx)
+      return copy(matchField = field)
     }
-    matchField
+    copy(matchField = field)
   }
 
   def isRedChar(seq: Seq[GameCharacter])(charac: String): Boolean = {

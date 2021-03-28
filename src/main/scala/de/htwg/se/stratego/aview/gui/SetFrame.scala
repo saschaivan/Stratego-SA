@@ -157,7 +157,7 @@ class SetFrame(controller:ControllerInterface) extends Frame {
        */
 
       message.text= playerName(1).toString + " now it's your turn. " +
-        "Set your figures on the red fields with following keystrokes:<br><br>" +
+        "Set your figures on the red fields with following keystrokes:" +
         "Bomb (\uD83D\uDCA3) with B\t" +
         "Marshal (\uD83D\uDC82) with M\n" +
         "General (9) with 9\t" +
@@ -169,8 +169,6 @@ class SetFrame(controller:ControllerInterface) extends Frame {
         "Miner (3) with 3\t" +
         "Scout (2) with 2\n" +
         "Spy (1) with 1\t" +
-        "Flag (\uD83C\uDFF3) with F\n"+
-        "</html>"
-
+        "Flag (\uD83C\uDFF3) with F\n"
   }
 }

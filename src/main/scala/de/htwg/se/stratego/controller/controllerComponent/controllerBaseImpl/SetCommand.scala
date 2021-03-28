@@ -4,7 +4,7 @@ import de.htwg.se.stratego.util.Command
 
 class SetCommand(player: Int, row:Int, col: Int, charac: String, controller: Controller) extends Command {
   override def doStep: Unit = {
-    controller.game = controller.game.copy(matchField = controller.game.set(player, row, col, charac))
+    controller.game = controller.game.copy(matchField = controller.game.set(player, row, col, charac).matchField)
   }
 
   override def undoStep: Unit = {
@@ -12,6 +12,6 @@ class SetCommand(player: Int, row:Int, col: Int, charac: String, controller: Con
   }
 
   override def redoStep: Unit = {
-    controller.game = controller.game.copy(matchField = controller.game.set(player, row, col, charac))
+    controller.game = controller.game.copy(matchField = controller.game.set(player, row, col, charac).matchField)
   }
 }

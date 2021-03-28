@@ -5,6 +5,8 @@ import de.htwg.se.stratego.model.matchFieldComponent.matchFieldBaseImpl.{Charact
 import de.htwg.se.stratego.model.playerComponent.Player
 import org.scalatest.{Matchers, WordSpec}
 
+import scala.collection.mutable.ListBuffer
+
 class ControllerSpec extends WordSpec with Matchers {
   "A Controller" when {
     "created" should {
@@ -21,7 +23,7 @@ class ControllerSpec extends WordSpec with Matchers {
       val playerRed = new Player("PlayerRed", characterList.getCharacterList())
       val game = new Game(playerBlue,playerRed,4,matchField)
 
-      val newCharacterList = Seq[GameCharacter](GameCharacter(Figure.Bomb),
+      val newCharacterList = ListBuffer[GameCharacter](GameCharacter(Figure.Bomb),
         GameCharacter(Figure.Bomb),
         GameCharacter(Figure.Flag),
         GameCharacter(Figure.Spy))
@@ -47,7 +49,7 @@ class ControllerSpec extends WordSpec with Matchers {
         controller.set(3,3,"6") should be ("")
         controller.set(3,0,"F") should be ("")
         controller.set(3,1,"9") should be ("")
-        controller.set(3,2,"8") should be ("")
+        controller.set(3,2,"8") should be ("Move Figures with (m direction[u,d,r,l] row col) or attack with (a row col row col)\nPlayerBlue it's your turn!")
 
         controller2.currentPlayerIndex = 0
         controller2.set(3,3,"6") should be ("")
@@ -86,7 +88,7 @@ class ControllerSpec extends WordSpec with Matchers {
         controller3.attack(3,3,2,3) should be("")
       }
       "can get matchfield as matrix" in {
-        controller.getField.toString should be ("Matrix(Vector(Vector( ,  ,  ,  ), Vector( ,  ,  ,  ), Vector( ,  ,  ,  ), Vector( ,  ,  ,  )))")
+        controller.getField.toString should be ("Matrix(Vector(Vector(F, 9, 8, 6), Vector( ,  ,  ,  ), Vector( ,  ,  ,  ), Vector(F, 9, 8, 6)))")
       }
       "can get status as string" in {
         controller.statusString should be ("")

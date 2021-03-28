@@ -6,7 +6,7 @@ class CharacterListSpec extends WordSpec with Matchers {
   "A CharacterList" when { "new with size 4" should {
     val characterlist = CharacterList(4)
     "have a list" in {
-      characterlist.characterList should be(Seq(GameCharacter(Figure.General),
+      characterlist.getCharacterList() should be(Seq(GameCharacter(Figure.General),
         GameCharacter(Figure.Colonel),
         GameCharacter(Figure.Captain),
         GameCharacter(Figure.Flag)))
@@ -25,7 +25,7 @@ class CharacterListSpec extends WordSpec with Matchers {
   "new with size 5" should {
     val characterlist = CharacterList(5)
     "have a list"  in {
-      characterlist.characterList should be(Seq(GameCharacter(Figure.General),
+      characterlist.getCharacterList() should be(Seq(GameCharacter(Figure.General),
         GameCharacter(Figure.Colonel),
         GameCharacter(Figure.Major),
         GameCharacter(Figure.Captain),
@@ -47,7 +47,7 @@ class CharacterListSpec extends WordSpec with Matchers {
   "new with size 6" should {
     val characterlist = CharacterList(6)
     "have a list"  in {
-      characterlist.characterList should be(Seq(GameCharacter(Figure.Bomb),
+      characterlist.getCharacterList() should be(Seq(GameCharacter(Figure.Bomb),
         GameCharacter(Figure.Miner),
         GameCharacter(Figure.General),
         GameCharacter(Figure.Colonel),
@@ -81,7 +81,7 @@ class CharacterListSpec extends WordSpec with Matchers {
   "new with size 7" should {
     val characterlist = CharacterList(7)
     "have a list"  in {
-      characterlist.characterList should be(Seq(GameCharacter(Figure.Bomb),
+      characterlist.getCharacterList() should be(Seq(GameCharacter(Figure.Bomb),
         GameCharacter(Figure.Bomb),
         GameCharacter(Figure.Marshal),
         GameCharacter(Figure.General),
@@ -120,7 +120,7 @@ class CharacterListSpec extends WordSpec with Matchers {
   "new with size 8" should {
     val characterlist = CharacterList(8)
     "have a list"  in {
-      characterlist.characterList should be(Seq(GameCharacter(Figure.Bomb),
+      characterlist.getCharacterList() should be(Seq(GameCharacter(Figure.Bomb),
         GameCharacter(Figure.Bomb),
         GameCharacter(Figure.Bomb),
         GameCharacter(Figure.Marshal),
@@ -179,7 +179,7 @@ class CharacterListSpec extends WordSpec with Matchers {
   "new with size 9" should {
     val characterlist = CharacterList(9)
     "have a list"  in {
-      characterlist.characterList should be(Seq(GameCharacter(Figure.Bomb),
+      characterlist.getCharacterList() should be(Seq(GameCharacter(Figure.Bomb),
         GameCharacter(Figure.Bomb),
         GameCharacter(Figure.Bomb),
         GameCharacter(Figure.Bomb),
@@ -244,7 +244,7 @@ class CharacterListSpec extends WordSpec with Matchers {
   "new with size 10" should {
     val characterlist = CharacterList(10)
     "have a list"  in {
-      characterlist.characterList should be(Seq(GameCharacter(Figure.Scout),
+      characterlist.getCharacterList() should be(Seq(GameCharacter(Figure.Scout),
         GameCharacter(Figure.Bomb),
         GameCharacter(Figure.Scout),
         GameCharacter(Figure.Bomb),
