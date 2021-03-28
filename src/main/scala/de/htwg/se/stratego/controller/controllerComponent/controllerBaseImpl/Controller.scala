@@ -9,8 +9,9 @@ import de.htwg.se.stratego.model.matchFieldComponent.MatchFieldInterface
 import de.htwg.se.stratego.model.matchFieldComponent.matchFieldBaseImpl.{CharacterList, Field, Game, MatchField, Matrix}
 import de.htwg.se.stratego.model.playerComponent.Player
 import de.htwg.se.stratego.util.UndoManager
+
 import scala.collection.mutable.ListBuffer
-import scala.swing.Publisher
+import scala.swing.{Publisher, reflectiveCalls}
 
 
 class Controller @Inject()(matchField:MatchFieldInterface) extends ControllerInterface with Publisher {
@@ -75,12 +76,10 @@ class Controller @Inject()(matchField:MatchFieldInterface) extends ControllerInt
   def initMatchfield(): String = {
     var newMatchField = matchField
     newMatchField = game.init(matchField, 0, 0, 0, 0).matchField
-    //newMatchField = game.init(matchField).matchField
     if (matchField.equals(newMatchField)) {
       ""
     } else {
       game = game.copy(matchField = game.init(matchField, 0, 0, 0, 0).matchField)
-      //game = game.copy(matchField = game.init(matchField).matchField)
       gameStatus=INIT
       nextState
       publish(new MachtfieldInitialized)
@@ -165,7 +164,7 @@ class Controller @Inject()(matchField:MatchFieldInterface) extends ControllerInt
     ""
   }
 
-  def matchFieldToString: String = matchField.toString
+  def matchFieldToString: String = game.matchField.toString
 
   def undo: String = {
     currentPlayerIndex= nextPlayer

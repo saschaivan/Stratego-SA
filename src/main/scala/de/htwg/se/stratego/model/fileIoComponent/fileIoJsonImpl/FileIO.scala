@@ -6,7 +6,7 @@ import de.htwg.se.stratego.model.fileIoComponent.FileIOInterface
 import de.htwg.se.stratego.model.matchFieldComponent.MatchFieldInterface
 import de.htwg.se.stratego.model.matchFieldComponent.matchFieldBaseImpl.{Colour, Figure, GameCharacter}
 import de.htwg.se.stratego.model.playerComponent.Player
-import play.api.libs.json.{JsNumber, JsValue, Json}
+import play.api.libs.json.{JsNumber, JsObject, JsValue, Json}
 
 import scala.io.Source
 
@@ -37,7 +37,7 @@ class FileIO extends FileIOInterface{
   }
 
 
-  def matchFieldToJson(matchField: MatchFieldInterface, currentPlayerIndex: Int, players: String) = {
+  def matchFieldToJson(matchField: MatchFieldInterface, currentPlayerIndex: Int, players: String): JsObject = {
     Json.obj(
       "currentPlayerIndex" -> JsNumber(currentPlayerIndex),
       "players" -> players,

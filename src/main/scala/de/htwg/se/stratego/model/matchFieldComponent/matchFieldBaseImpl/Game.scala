@@ -12,8 +12,8 @@ case class Game(playerA: Player, playerB: Player, size: Int, matchField: MatchFi
   def init(currentMatchField: MatchFieldInterface, row: Int, col: Int, bIdx: Int, rIdx: Int): Game = {
     var field: MatchFieldInterface = currentMatchField
     if (row < size) {
-      if (currentMatchField.fields.field(row, col).isSet) {
-        field = currentMatchField
+      if (matchField.fields.field(row, col).isSet) {
+        return copy(matchField = currentMatchField)
       }
       if (isRedOrBlueField(row, Colour.BLUE.value)) {
         field = field.addChar(row, col, bList(bIdx), Colour.FigureCol(0))
@@ -138,10 +138,10 @@ case class Game(playerA: Player, playerB: Player, size: Int, matchField: MatchFi
   def move(direction: Char, matchField: MatchFieldInterface, row: Int, col: Int, currentPlayerIndex: Int): MatchFieldInterface = {
     if (matchField.fields.field(row, col).isSet.equals(true) && matchField.fields.field(row, col).colour.get.value == currentPlayerIndex) {
       direction match {
-        case 'u' => return moveDirection(row, 0, row-1, col, row-1, col)(matchField, row, col) // moveUp
-        case 'd' => return moveDirection(row, size-1, row+1, col, row+1, col)(matchField, row, col) // moveDown
-        case 'r' => return moveDirection(col, size-1, row, col+1, row, col+1)(matchField, row,col) // moveRight
-        case 'l' => return moveDirection(col, 0, row, col-1, row, col-1)(matchField, row, col) // moveLeft
+        case 'u' => return moveUp(matchField, row, col) // moveUp
+        case 'd' => return moveDown(matchField, row, col) // moveDown
+        case 'r' => return moveRight(matchField, row, col) // moveRight
+        case 'l' => return moveLeft(matchField, row, col) // moveLeft
       }
     }
     matchField
@@ -154,6 +154,24 @@ case class Game(playerA: Player, playerB: Player, size: Int, matchField: MatchFi
       matchField.removeChar(row, col).addChar(newRowPos, newColPos, matchField.fields.field(row, col).character.get, matchField.fields.field(row, col).colour.get)
     }
   }
+
+  def moveDown(matchField: MatchFieldInterface, row: Int, col: Int): MatchFieldInterface = {
+    moveDirection(row, size-1, row+1, col, row+1, col)(matchField, row, col)
+  }
+
+  def moveUp(matchField: MatchFieldInterface, row: Int, col: Int): MatchFieldInterface = {
+    moveDirection(row, 0, row-1, col, row-1, col)(matchField, row, col)
+  }
+
+  def moveRight(matchField: MatchFieldInterface, row: Int, col: Int): MatchFieldInterface = {
+    moveDirection(col, size-1, row, col+1, row, col+1)(matchField, row,col)
+  }
+
+  def moveLeft(matchField: MatchFieldInterface, row: Int, col: Int): MatchFieldInterface = {
+    moveDirection(col, 0, row, col-1, row, col-1)(matchField, row, col)
+  }
+
+
 
   def figureHasValue(matchF: MatchFieldInterface, row: Int, col: Int): Int = matchF.fields.field(row, col).character.get.figure.value
 
