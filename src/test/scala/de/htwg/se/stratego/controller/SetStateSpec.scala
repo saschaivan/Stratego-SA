@@ -9,7 +9,6 @@ class SetStateSpec extends WordSpec with Matchers {
   "A SetStateSpec" when {
     val matchField = new MatchField(4, 4, false)
     val controller = new Controller(matchField)
-    controller.initMatchfield()
     val state = SetState(controller)
     "created" should {
       "handle" in {
