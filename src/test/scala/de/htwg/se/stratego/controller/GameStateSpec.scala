@@ -9,8 +9,7 @@ class GameStateSpec extends WordSpec with Matchers {
   "A InGameState" when {
     val matchField = new MatchField(4, 4, false)
     val controller = new Controller(matchField)
-    controller.initMatchfield()
-    val state = new GameState(controller)
+    val state = GameState(controller)
     "created" should {
       "handle" in {
         state.handle("m d 0 0") should be("")
