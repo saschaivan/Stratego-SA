@@ -4,7 +4,8 @@ import de.htwg.se.stratego.model.matchFieldComponent.matchFieldBaseImpl.{Field, 
 import org.scalatest.{Matchers, WordSpec}
 
 class MatrixSpec extends WordSpec with Matchers {
-  "A Matrix" when { "created with rowSize and colSize" should {
+  "A Matrix" when {
+    "created with rowSize and colSize" should {
     val field = new Field(true)
     val matrix = new Matrix(4,4,field)
     val fieldN = new Field(false)

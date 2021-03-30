@@ -43,7 +43,7 @@ class GameSpec extends WordSpec with Matchers {
     val game10 = matchFieldBaseImpl.Game(playerBlue10, playerRed10, 10, matchField10)
     "created with two Players and a empty Matchfield" should {
       "fill the Matchfield with Characters" in {
-        game.init(matchField, 0, 0, 0, 0).toString should be("Game(PlayerBlue,PlayerRed,4,   0     1     2     3  \n+-----+-----+-----+-----+\n|  \u001B[0;34m9\u001B[0m  |  \u001B[0;34m8\u001B[0m  |  \u001B[0;34m6\u001B[0m  |  \u001B[0;34mF\u001B[0m  | 0\n+-----+-----+-----+-----+\n|     |     |     |     | 1\n+-----+-----+-----+-----+\n|     |     |     |     | 2\n+-----+-----+-----+-----+\n|  \u001B[0;31m9\u001B[0m  |  \u001B[0;31m8\u001B[0m  |  \u001B[0;31m6\u001B[0m  |  \u001B[0;31mF\u001B[0m  | 3\n+-----+-----+-----+-----+\n**********  STRATEGO  **********\n\nn:   create a new empty machtfield\nz:   undo\ny:   redo\nq:   quit the programm\n)")
+        game.init(matchField, 0, 0, 0).toString should be("Game(PlayerBlue,PlayerRed,4,   0     1     2     3  \n+-----+-----+-----+-----+\n|  \u001B[0;34m9\u001B[0m  |  \u001B[0;34m8\u001B[0m  |  \u001B[0;34m6\u001B[0m  |  \u001B[0;34mF\u001B[0m  | 0\n+-----+-----+-----+-----+\n|     |     |     |     | 1\n+-----+-----+-----+-----+\n|     |     |     |     | 2\n+-----+-----+-----+-----+\n|  \u001B[0;31m9\u001B[0m  |  \u001B[0;31m8\u001B[0m  |  \u001B[0;31m6\u001B[0m  |  \u001B[0;31mF\u001B[0m  | 3\n+-----+-----+-----+-----+\n**********  STRATEGO  **********\n\nn:   create a new empty machtfield\nz:   undo\ny:   redo\nq:   quit the programm\n)")
       }
     }
 
@@ -76,7 +76,7 @@ class GameSpec extends WordSpec with Matchers {
 
 
     "gets a matchfield with a red and a blue List each with filled characters" should {
-      val board = game.init(matchField, 0, 0, 0, 0)
+      val board = game.init(matchField, 0, 0, 0)
       val board1 = game.moveDown(board.matchField,0,0)
       val board2 = game.moveDown(board1,1,0)
       "and now one character moves down" in {
@@ -88,7 +88,7 @@ class GameSpec extends WordSpec with Matchers {
     }
 
     "gets a matchfield with a red and a blue List each with filled characters" should {
-      val board = game.init(matchField, 0, 0, 0, 0)
+      val board = game.init(matchField, 0, 0, 0)
       val board1 = game.moveUp(board.matchField,3,0)
       val board2 = game.moveUp(board1,2,0)
       "and now one character moves up" in {
@@ -100,13 +100,13 @@ class GameSpec extends WordSpec with Matchers {
     }
 
     "gets a matchfield with a red and a blue List each with filled characters" should {
-      val board = game.init(matchField, 0, 0, 0, 0)
+      val board = game.init(matchField, 0, 0, 0)
       "and now one character moves to the left" in {
         game.moveLeft(board.matchField, 0, 1).toString should be("   0     1     2     3  \n+-----+-----+-----+-----+\n|  \u001B[0;34m9\u001B[0m  |  \u001B[0;34m8\u001B[0m  |  \u001B[0;34m6\u001B[0m  |  \u001B[0;34mF\u001B[0m  | 0\n+-----+-----+-----+-----+\n|     |     |     |     | 1\n+-----+-----+-----+-----+\n|     |     |     |     | 2\n+-----+-----+-----+-----+\n|  \u001B[0;31m9\u001B[0m  |  \u001B[0;31m8\u001B[0m  |  \u001B[0;31m6\u001B[0m  |  \u001B[0;31mF\u001B[0m  | 3\n+-----+-----+-----+-----+\n**********  STRATEGO  **********\n\nn:   create a new empty machtfield\nz:   undo\ny:   redo\nq:   quit the programm\n")
       }
     }
     "gets a matchfield with a red and a blue List each with filled characters" should {
-      val board = game.init(matchField, 0, 0, 0, 0)
+      val board = game.init(matchField, 0, 0, 0)
       "and now one character moves to the right" in {
         game.moveRight(board.matchField, 0, 0).toString should be("   0     1     2     3  \n+-----+-----+-----+-----+\n|  \u001B[0;34m9\u001B[0m  |  \u001B[0;34m8\u001B[0m  |  \u001B[0;34m6\u001B[0m  |  \u001B[0;34mF\u001B[0m  | 0\n+-----+-----+-----+-----+\n|     |     |     |     | 1\n+-----+-----+-----+-----+\n|     |     |     |     | 2\n+-----+-----+-----+-----+\n|  \u001B[0;31m9\u001B[0m  |  \u001B[0;31m8\u001B[0m  |  \u001B[0;31m6\u001B[0m  |  \u001B[0;31mF\u001B[0m  | 3\n+-----+-----+-----+-----+\n**********  STRATEGO  **********\n\nn:   create a new empty machtfield\nz:   undo\ny:   redo\nq:   quit the programm\n")
         game.moveRight(board.matchField, 3, 0).toString should be("   0     1     2     3  \n+-----+-----+-----+-----+\n|  \u001B[0;34m9\u001B[0m  |  \u001B[0;34m8\u001B[0m  |  \u001B[0;34m6\u001B[0m  |  \u001B[0;34mF\u001B[0m  | 0\n+-----+-----+-----+-----+\n|     |     |     |     | 1\n+-----+-----+-----+-----+\n|     |     |     |     | 2\n+-----+-----+-----+-----+\n|  \u001B[0;31m9\u001B[0m  |  \u001B[0;31m8\u001B[0m  |  \u001B[0;31m6\u001B[0m  |  \u001B[0;31mF\u001B[0m  | 3\n+-----+-----+-----+-----+\n**********  STRATEGO  **********\n\nn:   create a new empty machtfield\nz:   undo\ny:   redo\nq:   quit the programm\n")
@@ -114,7 +114,7 @@ class GameSpec extends WordSpec with Matchers {
     }
 
     "gets a matchfield with a red and a blue List each with filled characters" should {
-      val board = game.init(matchField, 0, 0, 0, 0)
+      val board = game.init(matchField, 0, 0, 0)
       "and now one character moves to the right out of bounds" in {
         game.moveRight(board.matchField, 3, 3).toString should be("   0     1     2     3  \n+-----+-----+-----+-----+\n|  \u001B[0;34m9\u001B[0m  |  \u001B[0;34m8\u001B[0m  |  \u001B[0;34m6\u001B[0m  |  \u001B[0;34mF\u001B[0m  | 0\n+-----+-----+-----+-----+\n|     |     |     |     | 1\n+-----+-----+-----+-----+\n|     |     |     |     | 2\n+-----+-----+-----+-----+\n|  \u001B[0;31m9\u001B[0m  |  \u001B[0;31m8\u001B[0m  |  \u001B[0;31m6\u001B[0m  |  \u001B[0;31mF\u001B[0m  | 3\n+-----+-----+-----+-----+\n**********  STRATEGO  **********\n\nn:   create a new empty machtfield\nz:   undo\ny:   redo\nq:   quit the programm\n")
       }
@@ -155,25 +155,25 @@ class GameSpec extends WordSpec with Matchers {
     }
 
     "gets a matchfield with characters" should {
-      val board = game.init(matchField, 0, 0, 0, 0)
+      val board = game.init(matchField, 0, 0, 0)
       "that are moving in directions" in {
         game.move('u',board.matchField,3,0,0).toString should be("   0     1     2     3  \n+-----+-----+-----+-----+\n|  \u001B[0;34m9\u001B[0m  |  \u001B[0;34m8\u001B[0m  |  \u001B[0;34m6\u001B[0m  |  \u001B[0;34mF\u001B[0m  | 0\n+-----+-----+-----+-----+\n|     |     |     |     | 1\n+-----+-----+-----+-----+\n|     |     |     |     | 2\n+-----+-----+-----+-----+\n|  \u001B[0;31m9\u001B[0m  |  \u001B[0;31m8\u001B[0m  |  \u001B[0;31m6\u001B[0m  |  \u001B[0;31mF\u001B[0m  | 3\n+-----+-----+-----+-----+\n**********  STRATEGO  **********\n\nn:   create a new empty machtfield\nz:   undo\ny:   redo\nq:   quit the programm\n")
       }
     }
 
     "gets a matchfield with characters" should {
-      val board = game.init(matchField, 0, 0, 0, 0)
+      val board = game.init(matchField, 0, 0, 0)
       "that has values" in {
         game.figureHasValue(board.matchField,0,0) should be(9)
       }
     }
 
     "gets a matchfield with characters" should {
-      val board = game.init(matchField, 0, 0, 0, 0)
+      val board = game.init(matchField, 0, 0, 0)
       val board1 = game.moveUp(board.matchField,3,2)
       val board2 = game.moveUp(board1,2,2)
       val board3 = game.moveRight(board2,1,2)
-      val board4 = game61.init(matchField6, 0, 0, 0, 0)
+      val board4 = game61.init(matchField6, 0, 0, 0)
       val board5 = game61.moveDown(board4.matchField,1,0)
       val board6 = game61.moveDown(board5,2,0)
       val board7 = game61.moveDown(board6,1,4)

@@ -7,9 +7,17 @@ case class MatchField @Inject() (fields: Matrix[Field]) extends MatchFieldInterf
 
   def this (rowSize: Int, colSize: Int, isSet: Boolean) = this(new Matrix[Field](rowSize, colSize, Field(isSet)))
 
+  def size: Int = fields.matrixSize
+
   def addChar(row: Int, col: Int, char: GameCharacter, colour: Colour.FigureCol): MatchField = copy(fields.updateField(row, col, Field(true, Some(char), Some(colour))))
 
   def removeChar(row: Int, col: Int): MatchField = copy(fields.updateField(row, col, Field(false,None,None)))
+
+  def fieldIsSet (row: Int, col: Int): Boolean = fields.field(row, col).isSet
+
+  def fieldColor(row: Int, col: Int): Int = fields.field(row, col).colour.get.value
+
+  def figureVal(row: Int, col: Int): Int = fields.field(row, col).character.get.figure.value
 
   def legend():String = {
     val welcome = "**********  STRATEGO  **********\n\n"

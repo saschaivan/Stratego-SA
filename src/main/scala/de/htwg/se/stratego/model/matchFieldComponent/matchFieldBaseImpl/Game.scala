@@ -9,39 +9,25 @@ case class Game(playerA: Player, playerB: Player, size: Int, matchField: MatchFi
   val bList: ListBuffer[GameCharacter] = playerA.characterList
   val rList: ListBuffer[GameCharacter] = playerB.characterList
 
-  def init(currentMatchField: MatchFieldInterface, row: Int, col: Int, bIdx: Int, rIdx: Int): Game = {
-    var field: MatchFieldInterface = currentMatchField
+  def init(currentMatchField: MatchFieldInterface, row: Int, col: Int, idx: Int): Game = {
     if (row < size) {
-      if (matchField.fields.field(row, col).isSet) {
-        return copy(matchField = currentMatchField)
-      }
-      if (isRedOrBlueField(row, Colour.BLUE.value)) {
-        field = field.addChar(row, col, bList(bIdx), Colour.FigureCol(0))
-        if (col < size-1) {
-          return init(field, row, col + 1, bIdx + 1, rIdx)
-        }
-        else {
-          return init(field, row + 1, 0, bIdx + 1, rIdx)
-        }
-      } else if (isRedOrBlueField(row, Colour.RED.value)) {
-        field = field.addChar(row, col, rList(rIdx), Colour.FigureCol(1))
-        if (col < size-1) {
-          return init(field, row, col + 1, bIdx, rIdx + 1)
-        }
-        else {
-          return init(field, row + 1, 0, bIdx, rIdx + 1)
-        }
-      } else {
-        return init(field, row + 1, col, bIdx, rIdx)
-      }
+      if (matchField.fields.field(row, col).isSet) return copy(matchField = currentMatchField)
+      if (isRedOrBlueField(row, Colour.BLUE.value)) return initColor(bList, Colour.FigureCol(0))(currentMatchField, row, col, idx)
+      else if (isRedOrBlueField(row, Colour.RED.value)) return initColor(rList, Colour.FigureCol(1))(currentMatchField, row, col, idx)
+      else return init(currentMatchField, row + 1, col, 0)
     }
-    copy(matchField = field)
+    copy(matchField = currentMatchField)
+  }
+
+  def initColor(list: ListBuffer[GameCharacter], color: Colour.FigureCol)(currentField: MatchFieldInterface, row: Int, col: Int, idx: Int): Game = {
+    var field: MatchFieldInterface = currentField
+      field = field.addChar(row, col, list(idx), color)
+      if (col < size - 1) init(field, row, col + 1, idx + 1)
+      else init(field, row + 1, 0, idx+1)
   }
 
   def characValue(charac: String): Int = {
-    if (charac.matches("[1-9]")) {
-      return charac.toInt
-    }
+    if (charac.matches("[1-9]")) return charac.toInt
     charac match {
       case "B" => 11
       case "M" => 10
@@ -49,8 +35,8 @@ case class Game(playerA: Player, playerB: Player, size: Int, matchField: MatchFi
     }
   }
 
-  def isRedOrBlueField(row: Int, BlueOrRed: Int): Boolean = {
-    if (BlueOrRed == 0) {
+  def isRedOrBlueField(row: Int, blueOrRed: Int): Boolean = {
+    if (blueOrRed == 0) {
       matchField.fields.matrixSize match {
         case 4 | 5 => if (row > 0) false else true
         case 6 | 7 => if (row > 1) false else true
@@ -108,35 +94,30 @@ case class Game(playerA: Player, playerB: Player, size: Int, matchField: MatchFi
               return false
           }
       }
-      if (col < size-1) {
-        return onlyBombAndFlag(board, currentPlayerIndex, row, col + 1)
-      }
-      else {
-        return onlyBombAndFlag(board, currentPlayerIndex, row + 1, 0)
-      }
+      if (col < size-1) return onlyBombAndFlag(board, currentPlayerIndex, row, col + 1)
+      else return onlyBombAndFlag(board, currentPlayerIndex, row + 1, 0)
     }
     true
   }
 
+  def fieldIsInMatchfield(rowD:Int, colD:Int): Boolean = rowD <= this.matchField.size - 1 && rowD >= 0 && colD >= 0 && colD <= this.matchField.size - 1
 
   def flagFound(rowD: Int, colD: Int, rowA: Int, colA: Int, currentPlayerIndex: Int): Boolean = {
-    if (rowD <= this.matchField.fields.matrixSize - 1 && rowD >= 0 && colD >= 0 && colD <= this.matchField.fields.matrixSize - 1 &&
-      this.matchField.fields.field(rowA, colA).isSet.equals(true) && this.matchField.fields.field(rowD, colD).isSet.equals(true)
-      && this.matchField.fields.field(rowD, colD).colour.get.value != currentPlayerIndex &&
-      this.matchField.fields.field(rowD, colD).character.get.figure.value == 0) true else false
+    if (fieldIsInMatchfield(rowD, colD) && this.matchField.fieldIsSet(rowA, colA).equals(true) && this.matchField.fieldIsSet(rowD, colD).equals(true)
+      && this.matchField.fieldColor(rowD, colD) != currentPlayerIndex &&
+      this.matchField.figureVal(rowD, colD) == 0) true else false
   }
 
   def attackValid(rowD: Int, colD: Int, rowA: Int, colA: Int, currentPlayerIndex: Int): Boolean = {
-    if (rowD <= this.matchField.fields.matrixSize - 1 && rowD >= 0 && colD >= 0 && colD <= this.matchField.fields.matrixSize - 1 &&
-      this.matchField.fields.field(rowA, colA).isSet && this.matchField.fields.field(rowA, colA).colour.get.value == currentPlayerIndex
-      && this.matchField.fields.field(rowD, colD).isSet && this.matchField.fields.field(rowD, colD).colour.get.value != currentPlayerIndex
+    if (fieldIsInMatchfield(rowD, colD) &&
+      this.matchField.fieldIsSet(rowA, colA) && this.matchField.fieldColor(rowA, colA) == currentPlayerIndex
+      && this.matchField.fieldIsSet(rowD, colD) && this.matchField.fieldColor(rowD, colD) != currentPlayerIndex
       && !isFlagOrBomb(matchField, rowA, colA))
       true else false
   }
 
-
   def move(direction: Char, matchField: MatchFieldInterface, row: Int, col: Int, currentPlayerIndex: Int): MatchFieldInterface = {
-    if (matchField.fields.field(row, col).isSet.equals(true) && matchField.fields.field(row, col).colour.get.value == currentPlayerIndex) {
+    if (matchField.fieldIsSet(row, col).equals(true) && matchField.fieldColor(row, col) == currentPlayerIndex) {
       direction match {
         case 'u' => return moveUp(matchField, row, col) // moveUp
         case 'd' => return moveDown(matchField, row, col) // moveDown
@@ -148,30 +129,17 @@ case class Game(playerA: Player, playerB: Player, size: Int, matchField: MatchFi
   }
 
   def moveDirection(rowCol:Int, eqRowCol:Int, rowPos:Int, colPos:Int, newRowPos: Int, newColPos:Int)(matchField: MatchFieldInterface, row: Int, col: Int): MatchFieldInterface = {
-    if (rowCol == eqRowCol || matchField.fields.field(rowPos, colPos).isSet.equals(true) || isFlagOrBomb(matchField, row, col)) {
-      matchField
-    } else {
-      matchField.removeChar(row, col).addChar(newRowPos, newColPos, matchField.fields.field(row, col).character.get, matchField.fields.field(row, col).colour.get)
-    }
+    if (rowCol == eqRowCol || matchField.fields.field(rowPos, colPos).isSet.equals(true) || isFlagOrBomb(matchField, row, col)) matchField
+    else matchField.removeChar(row, col).addChar(newRowPos, newColPos, matchField.fields.field(row, col).character.get, matchField.fields.field(row, col).colour.get)
   }
 
-  def moveDown(matchField: MatchFieldInterface, row: Int, col: Int): MatchFieldInterface = {
-    moveDirection(row, size-1, row+1, col, row+1, col)(matchField, row, col)
-  }
+  def moveDown(matchField: MatchFieldInterface, row: Int, col: Int): MatchFieldInterface = moveDirection(row, size-1, row+1, col, row+1, col)(matchField, row, col)
 
-  def moveUp(matchField: MatchFieldInterface, row: Int, col: Int): MatchFieldInterface = {
-    moveDirection(row, 0, row-1, col, row-1, col)(matchField, row, col)
-  }
+  def moveUp(matchField: MatchFieldInterface, row: Int, col: Int): MatchFieldInterface = moveDirection(row, 0, row-1, col, row-1, col)(matchField, row, col)
 
-  def moveRight(matchField: MatchFieldInterface, row: Int, col: Int): MatchFieldInterface = {
-    moveDirection(col, size-1, row, col+1, row, col+1)(matchField, row,col)
-  }
+  def moveRight(matchField: MatchFieldInterface, row: Int, col: Int): MatchFieldInterface = moveDirection(col, size-1, row, col+1, row, col+1)(matchField, row,col)
 
-  def moveLeft(matchField: MatchFieldInterface, row: Int, col: Int): MatchFieldInterface = {
-    moveDirection(col, 0, row, col-1, row, col-1)(matchField, row, col)
-  }
-
-
+  def moveLeft(matchField: MatchFieldInterface, row: Int, col: Int): MatchFieldInterface = moveDirection(col, 0, row, col-1, row, col-1)(matchField, row, col)
 
   def figureHasValue(matchF: MatchFieldInterface, row: Int, col: Int): Int = matchF.fields.field(row, col).character.get.figure.value
 
