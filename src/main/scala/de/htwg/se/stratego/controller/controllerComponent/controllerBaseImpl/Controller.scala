@@ -20,8 +20,8 @@ class Controller @Inject()(matchField:MatchFieldInterface) extends ControllerInt
   val fileIO = injector.getInstance(classOf[FileIOInterface])
 
   val list = CharacterList(matchField.fields.matrixSize)
-  val playerBlue = Player("PlayerBlue", list.getCharacterList)
-  val playerRed = Player("PlayerRed", list.getCharacterList)
+  val playerBlue = Player("PlayerBlue", list.getCharacterList())
+  val playerRed = Player("PlayerRed", list.getCharacterList())
   var game = Game(playerBlue, playerRed, matchField.fields.matrixSize, matchField)
   val playerList = List[Player](playerBlue, playerRed)
   val playerListBuffer: ListBuffer[Player] = ListBuffer.empty
@@ -73,7 +73,7 @@ class Controller @Inject()(matchField:MatchFieldInterface) extends ControllerInt
     "created new matchfield\nPlease enter the names like (player1 player2)"
   }
 
-  def initMatchfield: String = {
+  def initMatchfield(): String = {
     var newMatchField = matchField
     newMatchField = game.init(matchField, 0, 0, 0).matchField
     if (matchField.equals(newMatchField)) {

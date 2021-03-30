@@ -4,7 +4,7 @@ import scala.collection.mutable.ListBuffer
 
 case class CharacterList(size: Int) {
 
-  def getCharacterList: ListBuffer[GameCharacter] = {
+  def getCharacterList(): ListBuffer[GameCharacter] = {
     size match {
       case 10 =>
         ListBuffer(GameCharacter(Figure.Scout),
