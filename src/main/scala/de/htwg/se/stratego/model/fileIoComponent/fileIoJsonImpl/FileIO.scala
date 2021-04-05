@@ -8,19 +8,29 @@ import de.htwg.se.stratego.model.matchFieldComponent.matchFieldBaseImpl.{Colour,
 import de.htwg.se.stratego.model.playerComponent.Player
 import play.api.libs.json.{JsNumber, JsObject, JsValue, Json}
 
+import javax.swing.JOptionPane
 import scala.io.Source
+import scala.util.control.Breaks.break
+import scala.util.{Failure, Success, Try}
 
 
 
 class FileIO extends FileIOInterface{
 
+  def fileNotFound(filename: String): Try[String] = {
+    Try(Source.fromFile(filename).getLines().mkString)
+  }
 
   override def load: (MatchFieldInterface,Int,String) = {
-    var matchField: MatchFieldInterface = null
+    fileNotFound("matchField.json") match {
+      case Success(v) => println("File Found")
+      case Failure(v) => JOptionPane.showMessageDialog(null, "Es ist kein Spielstand vorhanden!")
+        break
+    }
     val source:String = Source.fromFile("matchField.json").getLines().mkString
     val json: JsValue = Json.parse(source)
     val injector = Guice.createInjector(new StrategoModule)
-    matchField = injector.getInstance(classOf[MatchFieldInterface])
+    var matchField = injector.getInstance(classOf[MatchFieldInterface])
     val currentPlayerIndex = (json \ "currentPlayerIndex").get.toString().toInt
     val playerS = (json \ "players").get.toString()
     for(index <- 0 until matchField.fields.matrixSize * matchField.fields.matrixSize){

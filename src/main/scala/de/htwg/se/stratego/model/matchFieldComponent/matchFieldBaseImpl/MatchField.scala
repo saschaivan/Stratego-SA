@@ -38,17 +38,14 @@ case class MatchField @Inject() (fields: Matrix[Field]) extends MatchFieldInterf
   def createNewMatchField: MatchFieldInterface = new MatchField(fields.matrixSize,fields.matrixSize,false)
 
   override def toString:String = {
-    val col = fields.matrixSize
-    val row = fields.matrixSize
-    val n = fields.matrixSize - 1
     val pipe = "|"
     val new_line = "\n"
     var matchField = ""
 
-    for(rowNumbers <- 0 until row) matchField += "   " + rowNumbers + "  "
-    matchField += new_line + frame(fields.matrixSize) + new_line
-    for { row <- 0 until row
-          col <- 0 until col }
+    for(rowNumbers <- 0 until size) matchField += "   " + rowNumbers + "  "
+    matchField += new_line + frame(size) + new_line
+    for { row <- 0 until size
+          col <- 0 until size }
     {
       if (fields.field(row, col).isSet) {
         if (fields.field(row,col).colour.get.value==0) {
@@ -56,12 +53,14 @@ case class MatchField @Inject() (fields: Matrix[Field]) extends MatchFieldInterf
         } else {
           matchField += "|  " + "\033[0;31m" + fields.field(row,col) + Console.RESET + "  "
         }
+      } else if (fields.isWater(row, col)){
+        matchField += "|  " + "~" + "  "
       } else {
         matchField += "|     "
       }
-      if (col == n) {
+      if (col == size - 1) {
         matchField += pipe + " " + row + new_line
-        matchField += frame(fields.matrixSize) + new_line
+        matchField += frame(size) + new_line
       }
     }
     matchField += legend()

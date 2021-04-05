@@ -2,7 +2,6 @@ package de.htwg.se.stratego.model.matchFieldComponent.matchFieldBaseImpl
 
 import de.htwg.se.stratego.model.matchFieldComponent.MatchFieldInterface
 import de.htwg.se.stratego.model.playerComponent.Player
-
 import scala.collection.mutable.ListBuffer
 
 case class Game(playerA: Player, playerB: Player, size: Int, matchField: MatchFieldInterface) {
@@ -109,7 +108,7 @@ case class Game(playerA: Player, playerB: Player, size: Int, matchField: MatchFi
   }
 
   def attackValid(rowD: Int, colD: Int, rowA: Int, colA: Int, currentPlayerIndex: Int): Boolean = {
-    if (fieldIsInMatchfield(rowD, colD) &&
+    if (fieldIsInMatchfield(rowD, colD) && !matchField.fields.isWater(rowD, colD) && !matchField.fields.isWater(rowA, colA) &&
       this.matchField.fieldIsSet(rowA, colA) && this.matchField.fieldColor(rowA, colA) == currentPlayerIndex
       && this.matchField.fieldIsSet(rowD, colD) && this.matchField.fieldColor(rowD, colD) != currentPlayerIndex
       && !isFlagOrBomb(matchField, rowA, colA))
@@ -129,7 +128,7 @@ case class Game(playerA: Player, playerB: Player, size: Int, matchField: MatchFi
   }
 
   def moveDirection(rowCol:Int, eqRowCol:Int, rowPos:Int, colPos:Int, newRowPos: Int, newColPos:Int)(matchField: MatchFieldInterface, row: Int, col: Int): MatchFieldInterface = {
-    if (rowCol == eqRowCol || matchField.fields.field(rowPos, colPos).isSet.equals(true) || isFlagOrBomb(matchField, row, col)) matchField
+    if (matchField.fields.isWater(rowPos, colPos).equals(true) || rowCol == eqRowCol || matchField.fields.field(rowPos, colPos).isSet.equals(true) || isFlagOrBomb(matchField, row, col)) matchField
     else matchField.removeChar(row, col).addChar(newRowPos, newColPos, matchField.fields.field(row, col).character.get, matchField.fields.field(row, col).colour.get)
   }
 
@@ -149,18 +148,36 @@ case class Game(playerA: Player, playerB: Player, size: Int, matchField: MatchFi
   object Context extends Game(playerA: Player, playerB: Player, size: Int, matchField: MatchFieldInterface) {
     def attack(matchField: MatchFieldInterface, rowA: Int, colA: Int, rowD: Int, colD: Int, currentPlayerIndex: Int): MatchFieldInterface = {
       def strategy1: MatchFieldInterface = matchField
-
       def strategy3: MatchFieldInterface = matchField.removeChar(rowD, colD).addChar(rowD, colD,
         matchField.fields.field(rowA, colA).character.get, matchField.fields.field(rowA, colA).colour.get).removeChar(rowA, colA)
-
       def strategy6: MatchFieldInterface = matchField.removeChar(rowD, colD)
-
       def strategy7: MatchFieldInterface = matchField.removeChar(rowA, colA)
-
       def strategy8: MatchFieldInterface = matchField.removeChar(rowA, colA).removeChar(rowD, colD)
+      val fieldIsNotSet = matchField.fields.field(rowA, colA).isSet.equals(false) || matchField.fields.field(rowD, colD).isSet.equals(false)
+      val attackOwnFigures = matchField.fields.field(rowD, colD).colour.get.value == currentPlayerIndex &&
+        matchField.fields.field(rowA, colA).colour.get.value == currentPlayerIndex
+      val enemyAttack = matchField.fields.field(rowD, colD).colour.get.value != currentPlayerIndex &&
+        matchField.fields.field(rowA, colA).colour.get.value != currentPlayerIndex
+      val wrongPlayerAttack = matchField.fields.field(rowD, colD).colour.get.value == currentPlayerIndex &&
+        matchField.fields.field(rowA, colA).colour.get.value != currentPlayerIndex
+      val attackToFarAway = ((Math.abs(rowA - rowD) > 1) || (Math.abs(colA - colD) > 1)) || ((Math.abs(rowA - rowD) == 1) && (Math.abs(colA - colD) == 1))
+      val minerAttackBomb = figureHasValue(matchField, rowA, colA) == 3 && figureHasValue(matchField, rowD, colD) == 11
+      val spyAttackMarshal = (figureHasValue(matchField, rowA, colA) == 1) && (figureHasValue(matchField, rowD, colD) == 10)
+      val defenseIsStronger = figureHasValue(matchField, rowA, colA) < figureHasValue(matchField, rowD, colD)
+      val attackIsStronger = figureHasValue(matchField, rowA, colA) > figureHasValue(matchField, rowD, colD)
+      val attackEqualsDefense = figureHasValue(matchField, rowA, colA) == figureHasValue(matchField, rowD, colD)
+      true match {
+        case true if fieldIsNotSet | attackOwnFigures | enemyAttack | wrongPlayerAttack | attackToFarAway => return strategy1
+        case true if minerAttackBomb => return strategy6
+        case true if spyAttackMarshal | attackIsStronger => return strategy3
+        case true if defenseIsStronger => return strategy7
+        case true if attackEqualsDefense => return strategy8
+      }
+      matchField
 
+      // TODO match statt if
       // is field set
-      if (matchField.fields.field(rowA, colA).isSet.equals(false) || matchField.fields.field(rowD, colD).isSet.equals(false)) return strategy1
+      /*if (matchField.fields.field(rowA, colA).isSet.equals(false) || matchField.fields.field(rowD, colD).isSet.equals(false)) return strategy1
       // is attack valid
       if (matchField.fields.field(rowD, colD).colour.get.value == currentPlayerIndex &&
         matchField.fields.field(rowA, colA).colour.get.value == currentPlayerIndex) return strategy1
@@ -182,7 +199,7 @@ case class Game(playerA: Player, playerB: Player, size: Int, matchField: MatchFi
       if (figureHasValue(matchField, rowA, colA) > figureHasValue(matchField, rowD, colD)) return strategy3
       // does attack equal defense
       if (figureHasValue(matchField, rowA, colA) == figureHasValue(matchField, rowD, colD)) return strategy8
-      matchField
+      matchField*/
     }
   }
 

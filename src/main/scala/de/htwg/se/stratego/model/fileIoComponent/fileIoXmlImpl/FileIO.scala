@@ -11,12 +11,11 @@ import scala.xml.PrettyPrinter
 
 class FileIO extends FileIOInterface{
   override def load: (MatchFieldInterface,Int,String) = {
-    var matchField: MatchFieldInterface = null
     val file = scala.xml.XML.loadFile("matchField.xml")
     val currentPlayerIndex = (file \\ "matchField" \ "@currentPlayerIndex").text.toInt
     val playerS = (file \\ "matchField" \ "@players").text
     val injector = Guice.createInjector(new StrategoModule)
-    matchField = injector.getInstance(classOf[MatchFieldInterface])
+    var matchField = injector.getInstance(classOf[MatchFieldInterface])
 
     val fieldNodes = (file \\ "field")
     for(field <- fieldNodes){

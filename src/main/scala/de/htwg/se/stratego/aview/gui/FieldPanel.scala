@@ -8,30 +8,31 @@ import scala.swing.{Button, Color, Dimension, FlowPanel}
 import de.htwg.se.stratego.controller.controllerComponent.ControllerInterface
 import javax.swing.border.LineBorder
 
-class FieldPanel (row:Int, col: Int, controller: ControllerInterface) extends FlowPanel {
+class FieldPanel(row: Int, col: Int, controller: ControllerInterface) extends FlowPanel {
 
   var fieldText = " "
   var isClicked = false
   val r = row
   val c = col
-  val  bor = new LineBorder(Color.WHITE, 2)
-  val colBlue = new Color(37,39,138)
-  val colRed = new Color(138,41,37)
-  val colGreen = new Color(37,138,73)
-  val colBrown = new Color(138,124,65)
+  val bor = new LineBorder(Color.WHITE, 2)
+  val colBlue = new Color(37, 39, 138)
+  val colRed = new Color(138, 41, 37)
+  val colGreen = new Color(37, 138, 73)
+  val colBrown = new Color(138, 124, 65)
+  val colLightBlue = new Color(180,160,255)
 
   background = colGreen
 
-  def fieldText(row:Int, col:Int): String ={
-    if(controller.getField.field(row,col).isSet){
-      if(controller.getField.field(row,col).character.get.figure.name.equals("F")){
-        fieldText="\uD83C\uDFF3"
-      }else if(controller.getField.field(row,col).character.get.figure.name.equals("B")){
-        fieldText="\uD83D\uDCA3"
-      }else if(controller.getField.field(row,col).character.get.figure.name.equals("M")){
-        fieldText="\uD83D\uDC82"
-      }else{
-        fieldText= controller.getField.field(row, col).character.get.figure.name
+  def fieldText(row: Int, col: Int): String = {
+    if (controller.getField.field(row, col).isSet) {
+      if (controller.getField.field(row, col).character.get.figure.name.equals("F")) {
+        fieldText = "\uD83C\uDFF3"
+      } else if (controller.getField.field(row, col).character.get.figure.name.equals("B")) {
+        fieldText = "\uD83D\uDCA3"
+      } else if (controller.getField.field(row, col).character.get.figure.name.equals("M")) {
+        fieldText = "\uD83D\uDC82"
+      } else {
+        fieldText = controller.getField.field(row, col).character.get.figure.name
       }
       fieldText
     }
@@ -39,21 +40,21 @@ class FieldPanel (row:Int, col: Int, controller: ControllerInterface) extends Fl
   }
 
 
-  val figureText = new Button{
-    text = fieldText(row,col)
+  val figureText = new Button {
+    text = fieldText(row, col)
     font = font.deriveFont(1, 25)
     foreground = Color.WHITE
     preferredSize = new Dimension(60, 60)
 
 
-    if(controller.getField.field(row,col).isSet) {
+    if (controller.getField.field(row, col).isSet) {
       if (controller.getField.field(row, col).colour.get.value == 0) {
         background = colBlue
       } else if (controller.getField.field(row, col).colour.get.value == 1) {
         background = colRed
       }
-      }else{
-        background = colGreen
+    } else {
+      background = colGreen
     }
 
     listenTo(keys)
@@ -85,7 +86,7 @@ class FieldPanel (row:Int, col: Int, controller: ControllerInterface) extends Fl
     }
   }
 
-  val field = new FlowPanel(){
+  val field = new FlowPanel() {
     contents += figureText
     background = colGreen
 
@@ -98,29 +99,33 @@ class FieldPanel (row:Int, col: Int, controller: ControllerInterface) extends Fl
 
   contents += field
 
-  def redraw ={
+  def redraw = {
     contents.clear()
 
     isClicked = false
 
-    if(controller.getField.field(row,col).isSet){
-      if(controller.getField.field(row, col).colour.get.value == controller.currentPlayerIndex){
-        figureText.text=fieldText(row,col)
-      } else{
-        figureText.text=""
+    if (controller.getField.field(row, col).isSet) {
+      if (controller.getField.field(row, col).colour.get.value == controller.currentPlayerIndex) {
+        figureText.text = fieldText(row, col)
+      } else {
+        figureText.text = ""
         figureText.icon = null
       }
-    }else{
-      figureText.text=""
+    } else if (controller.getField.isWater(row, col)) {
+      figureText.text = "\u2631"
+    } else {
+      figureText.text = ""
     }
 
-    if(controller.getField.field(row,col).isSet) {
+    if (controller.getField.field(row, col).isSet) {
       if (controller.getField.field(row, col).colour.get.value == 0) {
         figureText.background = colBlue
       } else if (controller.getField.field(row, col).colour.get.value == 1) {
         figureText.background = colRed
       }
-    }else{
+    } else if (controller.getField.isWater(row, col)) {
+      figureText.background = colLightBlue
+    } else {
       figureText.background = colBrown
     }
     contents += field

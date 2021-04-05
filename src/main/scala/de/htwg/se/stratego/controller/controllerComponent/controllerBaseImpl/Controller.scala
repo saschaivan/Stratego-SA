@@ -65,7 +65,7 @@ class Controller @Inject()(matchField:MatchFieldInterface) extends ControllerInt
   }
 
   def createEmptyMatchfield(size:Int): String = {
-    game = game.copy(playerBlue, playerRed, size, new MatchField(size, size, false))
+    game = game.copy(Player("PlayerBlue", list.getCharacterList()), Player("PlayerRed", list.getCharacterList()), size, new MatchField(size, size, false))
     gameStatus=NEW
     state = EnterPlayer(this)
     publish(new NewGame)
