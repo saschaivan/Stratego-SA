@@ -9,12 +9,14 @@ import de.htwg.se.stratego.model.matchFieldComponent.MatchFieldInterface
 import de.htwg.se.stratego.model.matchFieldComponent.matchFieldBaseImpl.{CharacterList, Field, Game, MatchField, Matrix}
 import de.htwg.se.stratego.model.playerComponent.Player
 import de.htwg.se.stratego.util.UndoManager
+import net.codingwell.scalaguice.InjectorExtensions._
+import com.google.inject.name.Names
 
 import scala.collection.mutable.ListBuffer
 import scala.swing.{Publisher, reflectiveCalls}
 
 
-class Controller @Inject()(matchField:MatchFieldInterface) extends ControllerInterface with Publisher {
+class Controller @Inject()(var matchField:MatchFieldInterface) extends ControllerInterface with Publisher {
 
   val injector = Guice.createInjector(new StrategoModule)
   val fileIO = injector.getInstance(classOf[FileIOInterface])
@@ -71,6 +73,16 @@ class Controller @Inject()(matchField:MatchFieldInterface) extends ControllerInt
     publish(new NewGame)
     currentPlayerIndex=0
     "created new matchfield\nPlease enter the names like (player1 player2)"
+  }
+
+  def resize(newSize:Int): Unit = {
+    newSize match {
+      case 4 => matchField = injector.instance[MatchFieldInterface](Names.named("tiny"))
+      case 6 => matchField = injector.instance[MatchFieldInterface](Names.named("small"))
+      case 10 => matchField = injector.instance[MatchFieldInterface](Names.named("normal"))
+      case _ =>
+    }
+    publish(new NewGame)
   }
 
   def initMatchfield(): String = {
