@@ -3,6 +3,9 @@ organization  := "de.htwg.se.stratego"
 version       := "0.2.0"
 scalaVersion  := "2.12.7"
 
+lazy val root = (project in file(".")).aggregate(matchfield)
+lazy val matchfield = (project in file("Matchfield"))
+
 libraryDependencies += "org.scalactic" %% "scalactic" % "3.1.1"
 libraryDependencies += "org.scalatest" %% "scalatest" % "3.1.1" % "test"
 
