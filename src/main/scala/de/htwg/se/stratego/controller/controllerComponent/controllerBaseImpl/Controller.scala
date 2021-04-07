@@ -75,16 +75,6 @@ class Controller @Inject()(var matchField:MatchFieldInterface) extends Controlle
     "created new matchfield\nPlease enter the names like (player1 player2)"
   }
 
-  def resize(newSize:Int): Unit = {
-    newSize match {
-      case 4 => matchField = injector.instance[MatchFieldInterface](Names.named("tiny"))
-      case 6 => matchField = injector.instance[MatchFieldInterface](Names.named("small"))
-      case 10 => matchField = injector.instance[MatchFieldInterface](Names.named("normal"))
-      case _ =>
-    }
-    publish(new NewGame)
-  }
-
   def initMatchfield(): String = {
     var newMatchField = matchField
     newMatchField = game.init(matchField, 0, 0, 0).matchField
