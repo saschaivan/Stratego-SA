@@ -1,6 +1,6 @@
 {
-  "currentPlayerIndex" : 0,
-  "players" : "PlayerBlue PlayerRed",
+  "currentPlayerIndex" : 1,
+  "players" : "ghter hgfhfg",
   "matchField" : [ {
     "row" : 0,
     "col" : 0,
@@ -9,10 +9,7 @@
     "colour" : 0
   }, {
     "row" : 0,
-    "col" : 1,
-    "figName" : "8",
-    "figValue" : 8,
-    "colour" : 0
+    "col" : 1
   }, {
     "row" : 0,
     "col" : 2,
@@ -30,7 +27,10 @@
     "col" : 0
   }, {
     "row" : 1,
-    "col" : 1
+    "col" : 1,
+    "figName" : "8",
+    "figValue" : 8,
+    "colour" : 0
   }, {
     "row" : 1,
     "col" : 2
