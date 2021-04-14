@@ -16,7 +16,7 @@ import scala.collection.mutable.ListBuffer
 import scala.swing.{Publisher, reflectiveCalls}
 
 
-class Controller @Inject()(var matchField:MatchFieldInterface) extends ControllerInterface with Publisher {
+class Controller @Inject()(matchField:MatchFieldInterface) extends ControllerInterface with Publisher {
 
   val injector = Guice.createInjector(new StrategoModule)
   val fileIO = injector.getInstance(classOf[FileIOInterface])
