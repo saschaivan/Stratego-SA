@@ -4,8 +4,7 @@ import com.google.inject.Guice
 import de.htwg.se.stratego.StrategoModule
 import de.htwg.se.stratego.model.fileIoComponent.FileIOInterface
 import de.htwg.se.stratego.model.matchFieldComponent.MatchFieldInterface
-import de.htwg.se.stratego.model.matchFieldComponent.matchFieldBaseImpl.{Colour, Figure, Game, GameCharacter}
-import de.htwg.se.stratego.model.playerComponent.Player
+import de.htwg.se.stratego.model.matchFieldComponent.matchFieldBaseImpl.{Colour, Figure, Game, GameCharacter, Player}
 
 import scala.xml.PrettyPrinter
 

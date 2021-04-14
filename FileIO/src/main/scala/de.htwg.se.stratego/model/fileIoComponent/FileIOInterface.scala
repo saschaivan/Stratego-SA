@@ -1,7 +1,7 @@
 package de.htwg.se.stratego.model.fileIoComponent
 
 import de.htwg.se.stratego.model.matchFieldComponent.MatchFieldInterface
-import de.htwg.se.stratego.model.playerComponent.Player
+import de.htwg.se.stratego.model.matchFieldComponent.matchFieldBaseImpl.Player
 
 trait FileIOInterface {
   def load: (MatchFieldInterface, Int, String)

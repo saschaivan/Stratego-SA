@@ -1,8 +1,7 @@
 package de.htwg.se.stratego.controller
 
 import de.htwg.se.stratego.controller.controllerComponent.controllerBaseImpl.Controller
-import de.htwg.se.stratego.model.matchFieldComponent.matchFieldBaseImpl.{CharacterList, Figure, Game, GameCharacter, MatchField}
-import de.htwg.se.stratego.model.playerComponent.Player
+import de.htwg.se.stratego.model.matchFieldComponent.matchFieldBaseImpl.{CharacterList, Figure, Game, GameCharacter, MatchField, Player}
 import org.scalatest.{Matchers, WordSpec}
 
 import scala.collection.mutable.ListBuffer

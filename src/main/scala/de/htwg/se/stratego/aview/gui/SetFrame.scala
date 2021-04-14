@@ -6,7 +6,7 @@ import scala.swing._
 import scala.swing.event._
 import de.htwg.se.stratego.controller.controllerComponent.{ControllerInterface, FieldChanged, GameStatus, MachtfieldInitialized, NewGame, PlayerSwitch}
 import de.htwg.se.stratego.controller.controllerComponent.GameStatus._
-import de.htwg.se.stratego.model.playerComponent.Player
+import de.htwg.se.stratego.model.matchFieldComponent.matchFieldBaseImpl.Player
 import javax.imageio.ImageIO
 import javax.swing.{BorderFactory, WindowConstants}
 import javax.swing.border.LineBorder

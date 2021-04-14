@@ -1,7 +1,6 @@
 package de.htwg.se.stratego.model.matchFieldComponent.matchFieldBaseImpl
 
 import de.htwg.se.stratego.model.matchFieldComponent.MatchFieldInterface
-import de.htwg.se.stratego.model.playerComponent.Player
 import scala.collection.mutable.ListBuffer
 
 case class Game(playerA: Player, playerB: Player, size: Int, matchField: MatchFieldInterface) {

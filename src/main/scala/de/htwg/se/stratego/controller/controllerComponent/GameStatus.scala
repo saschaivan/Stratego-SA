@@ -1,6 +1,5 @@
 package de.htwg.se.stratego.controller.controllerComponent
 import de.htwg.se.stratego.model.matchFieldComponent.matchFieldBaseImpl.{Field, Matrix}
-import de.htwg.se.stratego.model.playerComponent.Player
 
 object GameStatus extends Enumeration {
   type GameStatus = Value

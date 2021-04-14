@@ -5,8 +5,7 @@ import de.htwg.se.stratego.StrategoModule
 import de.htwg.se.stratego.controller.controllerComponent.{ControllerInterface, FieldChanged, GameFinished, GameStatus, MachtfieldInitialized, NewGame, PlayerChanged, PlayerSwitch}
 import de.htwg.se.stratego.controller.controllerComponent.GameStatus._
 import de.htwg.se.stratego.model.matchFieldComponent.MatchFieldInterface
-import de.htwg.se.stratego.model.matchFieldComponent.matchFieldBaseImpl.{CharacterList, Field, Game, MatchField, Matrix}
-import de.htwg.se.stratego.model.playerComponent.Player
+import de.htwg.se.stratego.model.matchFieldComponent.matchFieldBaseImpl.{CharacterList, Field, Game, MatchField, Matrix, Player}
 import de.htwg.se.stratego.util.UndoManager
 import net.codingwell.scalaguice.InjectorExtensions._
 import com.google.inject.name.Names

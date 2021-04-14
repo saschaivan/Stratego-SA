@@ -7,7 +7,7 @@ import de.htwg.se.stratego.controller.controllerComponent.GameStatus._
 import scala.swing.{Color, _}
 import scala.swing.event._
 import de.htwg.se.stratego.controller.controllerComponent.{ControllerInterface, FieldChanged, GameFinished, GameStatus, NewGame, PlayerSwitch}
-import de.htwg.se.stratego.model.playerComponent.Player
+import de.htwg.se.stratego.model.matchFieldComponent.matchFieldBaseImpl.Player
 import javax.imageio.ImageIO
 import javax.swing.{BorderFactory, JOptionPane, WindowConstants}
 import javax.swing.border.LineBorder

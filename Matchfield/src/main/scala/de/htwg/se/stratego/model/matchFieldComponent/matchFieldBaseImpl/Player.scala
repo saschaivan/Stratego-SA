@@ -1,6 +1,4 @@
-package de.htwg.se.stratego.model.playerComponent
-
-import de.htwg.se.stratego.model.matchFieldComponent.matchFieldBaseImpl.GameCharacter
+package de.htwg.se.stratego.model.matchFieldComponent.matchFieldBaseImpl
 
 import scala.collection.mutable.ListBuffer
 

@@ -2,8 +2,7 @@ package de.htwg.se.stratego.model.fileIo
 
 import de.htwg.se.stratego.controller.controllerComponent.controllerBaseImpl.Controller
 import de.htwg.se.stratego.model.fileIoComponent.fileIoJsonImpl.FileIO
-import de.htwg.se.stratego.model.matchFieldComponent.matchFieldBaseImpl.{CharacterList, Game, MatchField}
-import de.htwg.se.stratego.model.playerComponent.Player
+import de.htwg.se.stratego.model.matchFieldComponent.matchFieldBaseImpl.{CharacterList, Game, MatchField, Player}
 import org.scalatest.{Matchers, WordSpec}
 
 class FileIoSpec extends WordSpec with Matchers {

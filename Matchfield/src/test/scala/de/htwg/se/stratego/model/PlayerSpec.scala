@@ -1,6 +1,6 @@
 package de.htwg.se.stratego.model
-import de.htwg.se.stratego.model.matchFieldComponent.matchFieldBaseImpl.{CharacterList, Figure, GameCharacter}
-import de.htwg.se.stratego.model.playerComponent.Player
+
+import de.htwg.se.stratego.model.matchFieldComponent.matchFieldBaseImpl.{CharacterList, Figure, GameCharacter, Player}
 import org.scalatest.{Matchers, WordSpec}
 
 class PlayerSpec extends WordSpec with Matchers {

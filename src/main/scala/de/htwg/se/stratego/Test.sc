@@ -1,9 +1,8 @@
 
 
-import de.htwg.se.stratego.model.matchFieldComponent.matchFieldBaseImpl.{CharacterList, Game, MatchField}
-import de.htwg.se.stratego.model.playerComponent.Player
+import de.htwg.se.stratego.model.matchFieldComponent.matchFieldBaseImpl.{CharacterList, Game, MatchField, Player}
 
-import scala.swing.{Button}
+import scala.swing.Button
 
 
 val bu = new Button{
