@@ -28,7 +28,7 @@ class GameFrame(controller:ControllerInterface) extends Frame{
   val defaultBorder = new LineBorder(java.awt.Color.WHITE,1)
   val grColor = new Color(79,76,70)
   val iconImg = ImageIO.read(getClass.getResource("iconS.png"))
-  val playerName: List[Player] = if(controller.playerListBuffer.isEmpty) controller.playerList else controller.playerListBuffer.toList
+
 
   title = "Stratego"
   iconImage = iconImg
@@ -163,6 +163,7 @@ class GameFrame(controller:ControllerInterface) extends Frame{
 
   val status = new TextField(controller.statusString, 20)
 
+  val playerName: List[Player] = if(controller.playerListBuffer.isEmpty) controller.playerList else controller.playerListBuffer.toList
 
 
   val message = new TextPane {

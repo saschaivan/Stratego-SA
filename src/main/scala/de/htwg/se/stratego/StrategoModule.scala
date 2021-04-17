@@ -3,8 +3,6 @@ package de.htwg.se.stratego
 import com.google.inject.AbstractModule
 import com.google.inject.name.Names
 import de.htwg.se.stratego.controller.controllerComponent.ControllerInterface
-import de.htwg.se.stratego.model.fileIoComponent.FileIOInterface
-import de.htwg.se.stratego.model.fileIoComponent.fileIoJsonImpl.FileIO
 import de.htwg.se.stratego.model.matchFieldComponent.MatchFieldInterface
 import de.htwg.se.stratego.model.matchFieldComponent.matchFieldAvancedImpl.MatchField
 import net.codingwell.scalaguice.ScalaModule
@@ -24,9 +22,6 @@ class StrategoModule extends AbstractModule with ScalaModule {
     bind[MatchFieldInterface].annotatedWithName("tiny").toInstance(new MatchField(defaultSize, defaultSize, defaultSet))
     bind[MatchFieldInterface].annotatedWithName("small").toInstance(new MatchField(6, 6, defaultSet))
     bind[MatchFieldInterface].annotatedWithName("normal").toInstance(new MatchField(10, 10, defaultSet))
-
-    bind[FileIOInterface].to[FileIO]
-
   }
 
 }

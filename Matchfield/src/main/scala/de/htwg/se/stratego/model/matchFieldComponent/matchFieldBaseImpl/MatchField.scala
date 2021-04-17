@@ -1,7 +1,8 @@
 package de.htwg.se.stratego.model.matchFieldComponent.matchFieldBaseImpl
 
-import com.google.inject.{Inject}
+import com.google.inject.Inject
 import de.htwg.se.stratego.model.matchFieldComponent.MatchFieldInterface
+import play.api.libs.json.{JsObject, Json}
 
 case class MatchField @Inject() (fields: Matrix[Field]) extends MatchFieldInterface {
 
@@ -66,5 +67,4 @@ case class MatchField @Inject() (fields: Matrix[Field]) extends MatchFieldInterf
     matchField += legend()
     matchField
   }
-
 }

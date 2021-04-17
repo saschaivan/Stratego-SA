@@ -1,5 +1,5 @@
 package de.htwg.se.stratego.model.fileIoComponent.fileIoXmlImpl
-
+/*
 import com.google.inject.Guice
 import de.htwg.se.stratego.StrategoModule
 import de.htwg.se.stratego.model.fileIoComponent.FileIOInterface
@@ -61,4 +61,9 @@ class FileIO extends FileIOInterface {
   }
 
   override def save(matchField: MatchFieldInterface, currentPlayerIndex: Int, players: List[Player]): Unit = saveString(matchField,currentPlayerIndex,players)
+
+  override def load_JSON: String = ???
+
+  override def save(gamestate_json: String): Unit = ???
 }
+*/

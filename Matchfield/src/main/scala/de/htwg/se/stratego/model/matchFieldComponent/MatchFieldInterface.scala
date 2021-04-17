@@ -1,6 +1,7 @@
 package de.htwg.se.stratego.model.matchFieldComponent
 
 import de.htwg.se.stratego.model.matchFieldComponent.matchFieldBaseImpl.{Colour, Field, GameCharacter, MatchField, Matrix}
+import play.api.libs.json.JsObject
 
 trait MatchFieldInterface {
   def fields: Matrix[Field]

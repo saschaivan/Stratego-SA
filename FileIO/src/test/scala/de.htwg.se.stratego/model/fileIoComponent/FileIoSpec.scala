@@ -1,5 +1,5 @@
 package de.htwg.se.stratego.model.fileIo
-
+/*
 import de.htwg.se.stratego.controller.controllerComponent.controllerBaseImpl.Controller
 import de.htwg.se.stratego.model.fileIoComponent.fileIoJsonImpl.FileIO
 import de.htwg.se.stratego.model.matchFieldComponent.matchFieldBaseImpl.{CharacterList, Game, MatchField, Player}
@@ -32,4 +32,4 @@ class FileIoSpec extends WordSpec with Matchers {
       }
     }
   }
-}
+}*/

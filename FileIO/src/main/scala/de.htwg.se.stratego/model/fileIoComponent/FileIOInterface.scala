@@ -1,9 +1,8 @@
 package de.htwg.se.stratego.model.fileIoComponent
 
-import de.htwg.se.stratego.model.matchFieldComponent.MatchFieldInterface
-import de.htwg.se.stratego.model.matchFieldComponent.matchFieldBaseImpl.Player
+import spray.json.JsObject
 
 trait FileIOInterface {
-  def load: (MatchFieldInterface, Int, String)
-  def save(matchField: MatchFieldInterface, currentPlayerIndex: Int, players:List[Player]): Unit
+  def load_JSON: String
+  def save(gamestate_json: String): Unit
 }
