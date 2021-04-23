@@ -10,11 +10,9 @@ import de.htwg.se.stratego.controller.controllerComponent.GameStatus._
 import de.htwg.se.stratego.model.matchFieldComponent.MatchFieldInterface
 import de.htwg.se.stratego.model.matchFieldComponent.matchFieldBaseImpl.{CharacterList, Colour, Field, Figure, Game, GameCharacter, MatchField, Matrix, Player}
 import de.htwg.se.stratego.util.UndoManager
-import net.codingwell.scalaguice.InjectorExtensions._
-import com.google.inject.name.Names
 
 import scala.collection.mutable.ListBuffer
-import scala.swing.{Publisher, reflectiveCalls}
+import scala.swing.{Publisher}
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.model.{HttpMethods, HttpRequest, HttpResponse}
 import akka.http.scaladsl.unmarshalling.Unmarshal
@@ -22,7 +20,6 @@ import play.api.libs.json.{JsNumber, JsObject, JsValue, Json}
 
 import scala.util.{Failure, Success}
 import scala.concurrent.Future
-import scala.io.Source
 
 
 class Controller @Inject()(matchField:MatchFieldInterface) extends ControllerInterface with Publisher {
@@ -46,11 +43,6 @@ class Controller @Inject()(matchField:MatchFieldInterface) extends ControllerInt
 
   def handle(input: String):String = {
     state.handle(input)
-  }
-
-  def welcome():String = {
-    "Welcome to STRATEGO! " +
-      "Please enter first name of Player1 and then of Player2 like (player1 player2)!"
   }
 
   def setPlayers(input: String): String = {
@@ -170,6 +162,7 @@ class Controller @Inject()(matchField:MatchFieldInterface) extends ControllerInt
       undoManager.doStep(new MoveCommand(dir, game.matchField, row, col, currentPlayerIndex, this))
       if (!game.matchField.fieldIsSet(row,col)) {
         currentPlayerIndex = nextPlayer
+        gameStatus = MOVE
         publish(new FieldChanged)
         publish(new PlayerSwitch)
       }
@@ -247,6 +240,7 @@ class Controller @Inject()(matchField:MatchFieldInterface) extends ControllerInt
       playerListBuffer.append(i)
     }
     state = GameState(this)
+    gameStatus=LOAD
     publish(new FieldChanged)
   }
 
@@ -280,6 +274,7 @@ class Controller @Inject()(matchField:MatchFieldInterface) extends ControllerInt
   override def save: String = {
     val players = if (playerListBuffer.isEmpty) playerList else playerListBuffer.toList
     publish(new FieldChanged)
+    gameStatus=SAVE
     val playerS = players(0) + " " + players(1)
     val gamestate: String = Json.prettyPrint(matchFieldToJson(game.matchField, currentPlayerIndex, playerS))
     val responseFuture: Future[HttpResponse] = Http()

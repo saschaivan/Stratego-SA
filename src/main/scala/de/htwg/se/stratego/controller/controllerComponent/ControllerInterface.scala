@@ -9,7 +9,6 @@ import scala.swing.Publisher
 
 trait ControllerInterface extends Publisher {
   def handle(input:String):String
-  def welcome:String
   def setPlayers(input:String):String
   def createEmptyMatchfield(size:Int):String
   def initMatchfield:String
