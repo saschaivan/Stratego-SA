@@ -242,6 +242,7 @@ class Controller @Inject()(matchField:MatchFieldInterface) extends ControllerInt
     state = GameState(this)
     gameStatus=LOAD
     publish(new FieldChanged)
+    publish(new LoadGame)
   }
 
   def matchFieldToJson(matchField: MatchFieldInterface, currentPlayerIndex: Int, players: String): JsObject = {

@@ -1,6 +1,6 @@
 package de.htwg.se.stratego.aview
 
-import de.htwg.se.stratego.controller.controllerComponent.{ControllerInterface, FieldChanged, GameFinished, GameStatus, MachtfieldInitialized, NewGame, PlayerChanged, PlayerSwitch}
+/*import de.htwg.se.stratego.controller.controllerComponent.{ControllerInterface, FieldChanged, GameFinished, GameStatus, MachtfieldInitialized, NewGame, PlayerChanged, PlayerSwitch}
 
 import scala.swing.Reactor
 
@@ -36,4 +36,4 @@ class Tui(controller: ControllerInterface) extends Reactor {
     println(GameStatus.getMessage(controller.gameStatus))
   }
 
-}
+}*/

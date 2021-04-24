@@ -2,12 +2,11 @@ package de.htwg.se.stratego.aview.gui
 
 import java.awt.image.BufferedImage
 import java.awt.{Color, Font, Point, Toolkit}
+import de.htwg.se.stratego.controller.controllerComponent.{ControllerInterface, FieldChanged, LoadGame, PlayerChanged}
 
-import de.htwg.se.stratego.controller.controllerComponent.{ControllerInterface, PlayerChanged}
 import javax.imageio.ImageIO
 import javax.swing.border.LineBorder
 import javax.swing.{BorderFactory, ImageIcon, JFrame, WindowConstants}
-
 import scala.swing.event.ButtonClicked
 import scala.swing.{Button, Dimension, FlowPanel, Frame, GridPanel, Label, TextField}
 
@@ -22,7 +21,7 @@ class PlayerFrame(controller:ControllerInterface) extends Frame{
   val lightF = new Font("Calibri", 1, 25)
   val defaultFont = new Font("Calibri", Font.BOLD, 30)
   val defaultBorder = new LineBorder(java.awt.Color.WHITE,10)
-  val iconImg = ImageIO.read(getClass.getResource("iconS.png"))
+  val iconImg: BufferedImage = ImageIO.read(getClass.getResource("iconS.png"))
 
   title = "Stratego"
   iconImage = iconImg
@@ -31,34 +30,34 @@ class PlayerFrame(controller:ControllerInterface) extends Frame{
   //peer.setLocationRelativeTo(null)
   visible= true
 
-  val player1 = new TextField("", 20){
+  val player1: TextField = new TextField("", 20){
     foreground= lightG
     font = lightF
     border = BorderFactory.createEmptyBorder(0,20,0,0)
   }
 
-  val player2 = new TextField("", 20){
+  val player2: TextField = new TextField("", 20){
     foreground= lightG
     font = lightF
     border = BorderFactory.createEmptyBorder(0,20,0,0)
   }
 
-  def img = new Label{
+  def img: Label = new Label{
     icon = strategoI
   }
 
-  def welcomeString = new Label{
+  def welcomeString: Label = new Label{
     text = "Welcome to"
     foreground= defaultColor
     font = defaultFont
   }
 
-  def welcomePanel = new FlowPanel() {
+  def welcomePanel: FlowPanel = new FlowPanel() {
     contents += welcomeString
     contents += img
   }
 
-  def setPanel = new GridPanel(2,2){
+  def setPanel(): GridPanel = new GridPanel(2,2){
     contents += new Label {
       text = "Player 1:"
       foreground= defaultColor
@@ -75,21 +74,21 @@ class PlayerFrame(controller:ControllerInterface) extends Frame{
   }
 
 
-  val next = new Button{
+  val next: Button = new Button{
     text = "Play"
     font = defaultFont
     background = defaultColor
     foreground= Color.WHITE
   }
 
-  val load = new Button{
+  val load: Button = new Button{
     text = "Load Game"
     font = defaultFont
     background = lightG
     foreground = Color.WHITE
   }
 
-  val quit = new Button{
+  val quit: Button = new Button{
     text = "Quit"
     font = defaultFont
     background = lightG
@@ -98,7 +97,7 @@ class PlayerFrame(controller:ControllerInterface) extends Frame{
 
   def emptyPanel = new FlowPanel
 
-  def buttonPanel = new GridPanel(3,2) {
+  def buttonPanel: GridPanel = new GridPanel(3,2) {
     border = BorderFactory.createEmptyBorder(40,0,0,0)
     vGap = 30
     contents += emptyPanel
@@ -109,16 +108,28 @@ class PlayerFrame(controller:ControllerInterface) extends Frame{
     contents += quit
   }
 
-  listenTo(next)
+  def loadGame(): Unit = {
+    visible = false
+    deafTo(controller)
+    close()
+    Thread.sleep(500)
+    new GameFrame(controller)
+  }
+
+  listenTo(load)
+  reactions += {
+    case ButtonClicked(`load`) =>
+      controller.load
+      loadGame()
+  }
 
   reactions += {
-    case ButtonClicked(`next`) =>
-        listenTo(controller)
-      if(player1.text.isEmpty || player2.text.isEmpty) {
-        controller.handle("Player1"+ " "+ "Player2")
-      }
-      controller.handle(player1.text+ " "+ player2.text)
+    case event: LoadGame =>
+      loadGame()
   }
+
+  listenTo(next)
+
   reactions += {
     case event: PlayerChanged     =>
       visible = false
@@ -127,24 +138,22 @@ class PlayerFrame(controller:ControllerInterface) extends Frame{
       new SetFrame(controller)
   }
 
-  listenTo(load)
-  reactions += {
-    case ButtonClicked(`load`) =>
-      controller.load
-      visible = false
-      deafTo(controller)
-      close()
-      Thread.sleep(1000)
-      new GameFrame(controller)
-  }
-
   listenTo(quit)
   reactions += {
     case ButtonClicked(`quit`) =>
       System.exit(0)
   }
 
-  val mainPanel = new GridPanel(3,1) {
+  reactions += {
+    case ButtonClicked(`next`) =>
+      listenTo(controller)
+      if(player1.text.isEmpty || player2.text.isEmpty) {
+        controller.handle("Player1"+ " "+ "Player2")
+      }
+      controller.handle(player1.text+ " "+ player2.text)
+  }
+
+  val mainPanel: GridPanel = new GridPanel(3,1) {
     contents += img
     vGap = 30
     contents += setPanel

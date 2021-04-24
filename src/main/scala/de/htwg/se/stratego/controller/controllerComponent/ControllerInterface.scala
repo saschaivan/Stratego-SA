@@ -39,6 +39,7 @@ class PlayerChanged extends Event
 class MachtfieldInitialized extends Event
 class GameFinished extends Event
 class PlayerSwitch extends Event
+class LoadGame extends Event
 
 
 

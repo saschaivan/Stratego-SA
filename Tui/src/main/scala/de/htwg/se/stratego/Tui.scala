@@ -7,7 +7,7 @@ import de.htwg.se.stratego.controller.restController.RestController
 object Tui {
   val controller: ControllerInterface = new RestController
   val tui = new Tui(controller)
-  val restController = TuiService
+  val restController: TuiService.type = TuiService
 
 
   def main(args: Array[String]): Unit = {

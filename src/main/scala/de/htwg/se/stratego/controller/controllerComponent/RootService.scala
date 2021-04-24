@@ -5,8 +5,8 @@ import akka.actor.typed.scaladsl.Behaviors
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.model.{ContentTypes, HttpEntity, HttpMethods, HttpRequest}
 import akka.http.scaladsl.server.Directives._
-import de.htwg.se.stratego.Stratego
 import de.htwg.se.stratego.Stratego.controller
+import de.htwg.se.stratego.aview.gui.GameFrame
 
 import scala.concurrent.{ExecutionContextExecutor, Future}
 import scala.swing.Reactor
@@ -67,6 +67,7 @@ object RootService extends Reactor {
     case event: MachtfieldInitialized => postEvent("machtfieldInitializied", "Matchfield initialized\n")
     case event: GameFinished => postEvent("gameFinished", "Game finished! " + controller.playerList(controller.currentPlayerIndex) + " has won the game!\n")
     case event: PlayerSwitch => postEvent("playerSwitched", controller.playerList(controller.currentPlayerIndex) + " it's youre turn!\n")
+    case event: LoadGame => postEvent("loadGame", "Game loaded\n")
   }
 
   def stop(server: Future[Http.ServerBinding]): Unit = {
@@ -85,8 +86,8 @@ object RootService extends Reactor {
     )
   }
 
-
   def sendGETEvent(event: String): Unit = {
+    println(event)
     println(event)
     Http().singleRequest(
       HttpRequest(
@@ -95,6 +96,4 @@ object RootService extends Reactor {
       )
     )
   }
-
-
 }
