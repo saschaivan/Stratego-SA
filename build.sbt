@@ -3,8 +3,7 @@ organization  := "de.htwg.se.stratego"
 version       := "0.2.0"
 scalaVersion  := "2.12.7"
 
-lazy val root = (project in file(".")).aggregate(matchfield)
-lazy val matchfield = (project in file("Matchfield"))
+lazy val root = (project in file("."))
 lazy val fileIO = (project in file("FileIO"))
 lazy val tui = (project in file("Tui"))
 

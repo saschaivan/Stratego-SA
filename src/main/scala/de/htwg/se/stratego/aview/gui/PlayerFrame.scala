@@ -1,5 +1,6 @@
 package de.htwg.se.stratego.aview.gui
 
+import java.awt.image.BufferedImage
 import java.awt.{Color, Font, Point, Toolkit}
 
 import de.htwg.se.stratego.controller.controllerComponent.{ControllerInterface, PlayerChanged}
@@ -14,7 +15,7 @@ class PlayerFrame(controller:ControllerInterface) extends Frame{
 
   listenTo(controller)
 
-  val strategoImg = ImageIO.read(getClass.getResource("stratego.png"))
+  val strategoImg: BufferedImage = ImageIO.read(getClass.getResource("stratego.png"))
   val strategoI = new ImageIcon(strategoImg)
   val defaultColor = new Color(143,138,126)
   val lightG = new Color(192,192,192)

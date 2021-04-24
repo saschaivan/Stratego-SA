@@ -5,17 +5,17 @@ import akka.actor.typed.ActorSystem
 import akka.actor.typed.javadsl.Behaviors
 import com.google.inject.{Guice, Inject}
 import de.htwg.se.stratego.StrategoModule
-import de.htwg.se.stratego.controller.controllerComponent.{ControllerInterface, FieldChanged, GameFinished, GameStatus, MachtfieldInitialized, NewGame, PlayerChanged, PlayerSwitch}
 import de.htwg.se.stratego.controller.controllerComponent.GameStatus._
-import de.htwg.se.stratego.model.matchFieldComponent.MatchFieldInterface
-import de.htwg.se.stratego.model.matchFieldComponent.matchFieldBaseImpl.{CharacterList, Colour, Field, Figure, Game, GameCharacter, MatchField, Matrix, Player}
+import de.htwg.se.stratego.model.matchFieldComponent._
 import de.htwg.se.stratego.util.UndoManager
 
 import scala.collection.mutable.ListBuffer
-import scala.swing.{Publisher}
+import scala.swing.Publisher
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.model.{HttpMethods, HttpRequest, HttpResponse}
 import akka.http.scaladsl.unmarshalling.Unmarshal
+import de.htwg.se.stratego.controller.controllerComponent._
+import de.htwg.se.stratego.model.matchFieldComponent.matchFieldBaseImpl.{CharacterList, Colour, Field, Figure, Game, GameCharacter, MatchField, Matrix, Player}
 import play.api.libs.json.{JsNumber, JsObject, JsValue, Json}
 
 import scala.util.{Failure, Success}

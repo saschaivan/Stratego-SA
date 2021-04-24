@@ -31,8 +31,6 @@ trait ControllerInterface extends Publisher {
   def save:String
 }
 
-
-
 import scala.swing.event.Event
 
 class NewGame extends Event

@@ -13,7 +13,7 @@ object Stratego {
   val controller: ControllerInterface = injector.getInstance(classOf[ControllerInterface])
   val tui = new Tui(controller)
   val gui = new PlayerFrame(controller)
-  val rootService: RootService.type = RootService
+  val rootService = RootService
 
   def main(args: Array[String]): Unit = {
     val start = rootService.server()

@@ -4,13 +4,15 @@ import akka.actor.typed.ActorSystem
 import akka.actor.typed.scaladsl.Behaviors
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.model.{ContentTypes, HttpEntity, HttpMethods, HttpRequest}
-import akka.http.scaladsl.server.Directives.{complete, concat, get, path, _}
+import akka.http.scaladsl.server.Directives._
+import de.htwg.se.stratego.Stratego
 import de.htwg.se.stratego.Stratego.controller
 
 import scala.concurrent.{ExecutionContextExecutor, Future}
 import scala.swing.Reactor
 
 object RootService extends Reactor {
+
   listenTo(controller)
 
   implicit val system: ActorSystem[Nothing] = ActorSystem(Behaviors.empty, "my-system")
@@ -61,7 +63,7 @@ object RootService extends Reactor {
   reactions += {
     case event: NewGame => postEvent("createNewMatchfield", controller.matchFieldToString + "\nCreated new matchfield\nPlease enter the names like (player1 player2)\n")
     case event: FieldChanged => postEvent("fieldChanged", controller.matchFieldToString)
-    case event: PlayerChanged => postEvent("playerChanged", "Hello " + controller.playerList(0) + " and "+ controller.playerList(1) + "!\n")
+    case event: PlayerChanged => postEvent("playerChanged", "Hello " + controller.playerList(0) + " and " + controller.playerList(1) + "!\n")
     case event: MachtfieldInitialized => postEvent("machtfieldInitializied", "Matchfield initialized\n")
     case event: GameFinished => postEvent("gameFinished", "Game finished! " + controller.playerList(controller.currentPlayerIndex) + " has won the game!\n")
     case event: PlayerSwitch => postEvent("playerSwitched", controller.playerList(controller.currentPlayerIndex) + " it's youre turn!\n")
