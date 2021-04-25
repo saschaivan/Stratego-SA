@@ -15,10 +15,12 @@ object RootService extends Reactor {
 
   listenTo(controller)
 
-  implicit val system: ActorSystem[Nothing] = ActorSystem(Behaviors.empty, "my-system")
+  implicit val system: ActorSystem[Nothing] = ActorSystem(Behaviors.empty, "root")
   implicit val executionContext: ExecutionContextExecutor = system.executionContext
 
-  val port = 7070
+  val uri = "0.0.0.0"
+
+  val port = 8080
 
   def server(): Future[Http.ServerBinding] = {
     val route =
@@ -57,7 +59,7 @@ object RootService extends Reactor {
           }
         },
       )
-    Http().newServerAt("localhost", port).bind(route)
+    Http().newServerAt(uri, port).bind(route)
   }
 
   reactions += {
@@ -80,19 +82,17 @@ object RootService extends Reactor {
     Http().singleRequest(
       HttpRequest(
         method = HttpMethods.POST,
-        uri = "http://localhost:7090/tui/events/" + event,
+        uri = s"http://${uri}:8081/tui/events/" + event,
         entity = HttpEntity(ContentTypes.`text/html(UTF-8)`, output)
       )
     )
   }
 
   def sendGETEvent(event: String): Unit = {
-    println(event)
-    println(event)
     Http().singleRequest(
       HttpRequest(
         method = HttpMethods.GET,
-        uri = "http://localhost:7090/tui/events" + event
+        uri = s"http://${uri}:8081/tui/events" + event
       )
     )
   }

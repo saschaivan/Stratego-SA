@@ -1,0 +1,24 @@
+version: "3.9"
+services:
+  tui:
+    build:
+      context: ./Tui
+    ports:
+    - "8081:8081"
+  fileio:
+    build:
+      context: ./FileIO
+    ports:
+    - "8082:8082"
+    volumes:
+    - .:/matchField
+  root:
+    build: .
+    ports:
+    - "8080:8080"
+    depends_on:
+      - tui
+      - fileio
+    environment:
+      - TUISERVICE=tui:8081
+      - FILEIOSERVICE=fileio:8082

@@ -13,9 +13,13 @@ case object FileIOService {
   def main(args: Array[String]): Unit = {
 
     val fileIO = new FileIO
-    implicit val system = ActorSystem(Behaviors.empty, "my-system")
+    implicit val system = ActorSystem(Behaviors.empty, "fileIO")
     // needed for the future flatMap/onComplete in the end
     implicit val executionContext = system.executionContext
+
+    val port = 8082
+
+    val uri = "0.0.0.0"
 
     val route =
       concat (
@@ -36,6 +40,6 @@ case object FileIOService {
 
       )
 
-    val bindingFuture = Http().newServerAt("localhost", 8080).bind(route)
+    val bindingFuture = Http().newServerAt(uri, port).bind(route)
   }
 }

@@ -1,5 +1,5 @@
 FROM hseeberger/scala-sbt:8u222_1.3.5_2.13.1
-EXPOSE 8080 8080
-WORKDIR /stratego
-ADD . /stratego
+EXPOSE 8081 8081
+WORKDIR /tui
+ADD . /tui
 CMD sbt run

@@ -27,7 +27,7 @@ class Controller @Inject()(matchField:MatchFieldInterface) extends ControllerInt
   implicit val system = ActorSystem(Behaviors.empty, "SingleRequest")
   implicit val executionContext = system.executionContext
 
-  val responseFuture: Future[HttpResponse] = Http().singleRequest(HttpRequest(uri = "http://localhost:8080/json"))
+  val responseFuture: Future[HttpResponse] = Http().singleRequest(HttpRequest(uri = "http://0.0.0.0:8082/json"))
 
   val list = CharacterList(matchField.fields.matrixSize)
   val playerBlue = Player("PlayerBlue", list.getCharacterList())
@@ -279,7 +279,7 @@ class Controller @Inject()(matchField:MatchFieldInterface) extends ControllerInt
     val playerS = players(0) + " " + players(1)
     val gamestate: String = Json.prettyPrint(matchFieldToJson(game.matchField, currentPlayerIndex, playerS))
     val responseFuture: Future[HttpResponse] = Http()
-      .singleRequest(HttpRequest(method = HttpMethods.POST, uri = "http://localhost:8080/json", entity = gamestate))
+      .singleRequest(HttpRequest(method = HttpMethods.POST, uri = "http://0.0.0.0:8082/json", entity = gamestate))
     "save"
   }
 }
