@@ -9,7 +9,6 @@ object Tui {
   val tui = new Tui(controller)
   val restController: TuiService.type = TuiService
 
-
   def main(args: Array[String]): Unit = {
 
     val server = restController.start()

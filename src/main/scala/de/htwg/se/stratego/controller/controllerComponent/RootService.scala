@@ -20,9 +20,12 @@ object RootService extends Reactor {
 
   val uri = "root_service"
 
+  val port = 8080
+
   val tuiUri = "tui_service"
 
-  val port = 8080
+  val tuiPort = 8082
+
 
   def server(): Future[Http.ServerBinding] = {
     val route =
@@ -84,7 +87,7 @@ object RootService extends Reactor {
     Http().singleRequest(
       HttpRequest(
         method = HttpMethods.POST,
-        uri = s"http://${tuiUri}:8082/tui/events/" + event,
+        uri = s"http://${tuiUri}:${tuiPort}/tui/events/" + event,
         entity = HttpEntity(ContentTypes.`text/html(UTF-8)`, output)
       )
     )

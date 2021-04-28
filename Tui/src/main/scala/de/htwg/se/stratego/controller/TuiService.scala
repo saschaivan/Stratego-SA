@@ -23,11 +23,13 @@ object TuiService extends Reactor {
   implicit val system: ActorSystem[Nothing] = ActorSystem(Behaviors.empty, "tui")
   implicit val executionContext: ExecutionContextExecutor = system.executionContext
 
-  val port = 8082
-
   val uri = "tui_service"
 
+  val port = 8082
+
   val rootUri = "root_service"
+
+  val rootPort = 8080
 
   def receivePOSTAndPublishEvent(eventPath: String, event: String => Event): Route = {
     path("tui" / "events" / eventPath) {
@@ -63,7 +65,7 @@ object TuiService extends Reactor {
     Http().singleRequest(
       HttpRequest(
         method = HttpMethods.GET,
-        uri = s"http://${rootUri}:8080/controller/" + commandPath,
+        uri = s"http://${rootUri}:${rootPort}/controller/" + commandPath,
       )
     )
   }
@@ -72,7 +74,7 @@ object TuiService extends Reactor {
     Http().singleRequest(
       HttpRequest(
         method = HttpMethods.POST,
-        uri = s"http://${rootUri}:8080/controller/" + commandPath,
+        uri = s"http://${rootUri}:${rootPort}/controller/" + commandPath,
         entity = HttpEntity(ContentTypes.`text/html(UTF-8)`, input)
       )
     )
