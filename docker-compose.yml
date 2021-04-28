@@ -1,24 +1,27 @@
 version: "3.9"
 services:
   tui:
+    container_name: "tui_service"
     build:
       context: ./Tui
     ports:
-    - "8081:8081"
+      - "8082:8082"
+    stdin_open: true
+    tty: true
   fileio:
+    container_name: "fileio_service"
     build:
       context: ./FileIO
     ports:
-    - "8082:8082"
-    volumes:
-    - .:/matchField
+      - "8081:8081"
   root:
+    container_name: "root_service"
     build: .
     ports:
-    - "8080:8080"
+      - "8080:8080"
+    stdin_open: true
     depends_on:
       - tui
       - fileio
     environment:
-      - TUISERVICE=tui:8081
-      - FILEIOSERVICE=fileio:8082
+      DISPLAY: host.docker.internal:0

@@ -17,9 +17,9 @@ case object FileIOService {
     // needed for the future flatMap/onComplete in the end
     implicit val executionContext = system.executionContext
 
-    val port = 8082
+    val port = 8081
 
-    val uri = "0.0.0.0"
+    val uri = "fileio_service"
 
     val route =
       concat (

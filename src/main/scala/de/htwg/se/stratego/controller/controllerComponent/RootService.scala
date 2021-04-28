@@ -18,7 +18,9 @@ object RootService extends Reactor {
   implicit val system: ActorSystem[Nothing] = ActorSystem(Behaviors.empty, "root")
   implicit val executionContext: ExecutionContextExecutor = system.executionContext
 
-  val uri = "0.0.0.0"
+  val uri = "root_service"
+
+  val tuiUri = "tui_service"
 
   val port = 8080
 
@@ -82,17 +84,8 @@ object RootService extends Reactor {
     Http().singleRequest(
       HttpRequest(
         method = HttpMethods.POST,
-        uri = s"http://${uri}:8081/tui/events/" + event,
+        uri = s"http://${tuiUri}:8082/tui/events/" + event,
         entity = HttpEntity(ContentTypes.`text/html(UTF-8)`, output)
-      )
-    )
-  }
-
-  def sendGETEvent(event: String): Unit = {
-    Http().singleRequest(
-      HttpRequest(
-        method = HttpMethods.GET,
-        uri = s"http://${uri}:8081/tui/events" + event
       )
     )
   }
