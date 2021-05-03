@@ -49,6 +49,12 @@ object RootService extends Reactor {
           }
         },
         get {
+          path("controller" / "savedb") {
+            controller.savedb
+            complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, GameStatus.getMessage(controller.gameStatus)))
+          }
+        },
+        get {
           path("controller" / "redo") {
             controller.redo
             complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, GameStatus.getMessage(controller.gameStatus)))

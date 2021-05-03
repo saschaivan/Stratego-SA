@@ -31,7 +31,9 @@ class Controller @Inject()(matchField:MatchFieldInterface) extends ControllerInt
 
   val port = 8081
 
-  val responseFuture: Future[HttpResponse] = Http().singleRequest(HttpRequest(uri = s"http://${uri}:${port}/json"))
+  def createTables(): Unit = {
+    Http().singleRequest(HttpRequest(uri = s"http://${uri}:${port}/createTables"))
+  }
 
   val list = CharacterList(matchField.fields.matrixSize)
   val playerBlue = Player("PlayerBlue", list.getCharacterList())
@@ -45,7 +47,8 @@ class Controller @Inject()(matchField:MatchFieldInterface) extends ControllerInt
   private val undoManager = new UndoManager
   var state: ControllerState = EnterPlayer(this)
 
-  def handle(input: String):String = {
+  def handle(input: String): String = {
+    //createTables()
     state.handle(input)
   }
 
@@ -208,6 +211,7 @@ class Controller @Inject()(matchField:MatchFieldInterface) extends ControllerInt
   override def getField: Matrix[Field] = game.matchField.fields
 
   override def load: String = {
+    val responseFuture: Future[HttpResponse] = Http().singleRequest(HttpRequest(uri = s"http://${uri}:${port}/json"))
     responseFuture.onComplete {
       case Failure(_) => sys.error("HttpResponse failure")
       case Success(res) => {
@@ -219,6 +223,8 @@ class Controller @Inject()(matchField:MatchFieldInterface) extends ControllerInt
         }
       }
     }
+    // load game and delete data in tables afterwards
+    //val dbfuture: Future[HttpResponse] = Http().singleRequest(HttpRequest(method = HttpMethods.GET, uri = s"http://${uri}:${port}/deletedb"))
     "load"
   }
 
@@ -285,5 +291,15 @@ class Controller @Inject()(matchField:MatchFieldInterface) extends ControllerInt
     val responseFuture: Future[HttpResponse] = Http()
       .singleRequest(HttpRequest(method = HttpMethods.POST, uri = s"http://${uri}:${port}/json", entity = gamestate))
     "save"
+  }
+
+  override def savedb: Unit = {
+    val players = if (playerListBuffer.isEmpty) playerList else playerListBuffer.toList
+    publish(new FieldChanged)
+    gameStatus=SAVE
+    val playerS = players(0) + " " + players(1)
+    val gamestate: String = Json.prettyPrint(matchFieldToJson(game.matchField, currentPlayerIndex, playerS))
+    val dbfuture: Future[HttpResponse] = Http()
+      .singleRequest(HttpRequest(method = HttpMethods.POST, uri = s"http://${uri}:${port}/savedb", entity = gamestate))
   }
 }

@@ -248,6 +248,11 @@ class GameFrame(controller:ControllerInterface) extends Frame{
         controller.load
         redraw
       })
+      contents += new MenuItem(Action("Save to Database") {
+        foreground = new Color(73,82,89)
+        controller.savedb
+        redraw
+      })
     }
   }
 

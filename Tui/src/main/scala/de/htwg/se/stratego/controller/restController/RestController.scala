@@ -18,4 +18,6 @@ class RestController extends ControllerInterface {
   override def load(): Unit = controller.GETnoParam("load")
 
   override def save(): Unit = controller.GETnoParam("save")
+
+  override def savedb(): Unit = controller.GETnoParam("savedb")
 }

@@ -10,6 +10,7 @@ trait ControllerInterface extends Publisher {
   def redo():Unit
   def load():Unit
   def save():Unit
+  def savedb(): Unit
 }
 
 
