@@ -1,9 +1,9 @@
-package de.htwg.se.stratego.model.fileIODatabase.fileIOSlick
+package de.htwg.se.stratego.model.FileIODatabase.fileIOSlick
 
 import slick.jdbc.PostgresProfile.api._
 import slick.lifted.ProvenShape
 
-case class Matchfield(id: Int, row: Int, col: Int, figName: Option[String] = None, figValue: Option[Int] = None, colour: Option[Int] = None)
+//case class Matchfield(id: Int, row: Int, col: Int, figName: Option[String] = None, figValue: Option[Int] = None, colour: Option[Int] = None)
 
 class SlickPlayer(tag: Tag) extends Table[(Int, Int, String)](tag, "player") {
 
@@ -14,7 +14,7 @@ class SlickPlayer(tag: Tag) extends Table[(Int, Int, String)](tag, "player") {
   override def * : ProvenShape[(Int, Int, String)] = (id, currentPlayerIndex, players)
 }
 
-class SlickMatchfield(tag: Tag) extends Table[Matchfield](tag, "matchfield") {
+class SlickMatchfield(tag: Tag) extends Table[(Int, Int, Int, Option[String], Option[Int], Option[Int])](tag, "matchfield") {
 
   def id: Rep[Int] = column[Int]("ID", O.PrimaryKey, O.AutoInc)
   def row: Rep[Int] = column[Int]("ROW")
@@ -23,5 +23,11 @@ class SlickMatchfield(tag: Tag) extends Table[Matchfield](tag, "matchfield") {
   def figValue: Rep[Option[Int]] = column[Option[Int]]("FIGVALUE")
   def colour: Rep[Option[Int]] = column[Option[Int]]("COLOUR")
 
-  override def * : ProvenShape[Matchfield] = (id, row, col, figName, figValue, colour) <>(Matchfield.tupled, Matchfield.unapply)
+  override def * : ProvenShape[(Int, Int, Int, Option[String], Option[Int], Option[Int])] = (id, row, col, figName, figValue, colour)
+}
+
+class SlickOnlyOneTable(tag: Tag) extends Table[Int](tag, "TEST") {
+  def id: Rep[Int] = column[Int]("ID")
+
+  override def * : ProvenShape[Int] = (id)
 }

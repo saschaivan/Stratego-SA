@@ -28,7 +28,7 @@ class Controller @Inject()(matchField:MatchFieldInterface) extends ControllerInt
   implicit val executionContext = system.executionContext
 
   val uri = "fileio_service"
-
+  //val uri = "localhost"
   val port = 8081
 
   def createTables(): Unit = {

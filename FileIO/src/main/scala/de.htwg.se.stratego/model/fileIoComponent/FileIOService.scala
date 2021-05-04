@@ -6,21 +6,23 @@ import akka.http.scaladsl.model.HttpResponse
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.model.{ContentTypes, HttpEntity, StatusCode}
 import akka.http.scaladsl.server.Directives._
-import de.htwg.se.stratego.model.fileIODatabase.fileIOSlick.FileIOSlick
+import de.htwg.se.stratego.model.FileIODatabase.fileIOSlick.FileIOSlick
 import de.htwg.se.stratego.model.fileIoComponent.fileIoJsonImpl.FileIO
 
 
-case object FileIOService {
+object FileIOService {
 
   def main(args: Array[String]): Unit = {
 
     val fileIO = new FileIO
-    val slickdb = new FileIOSlick
+    val slickdb = FileIOSlick()
+    //slickdb.create()
     implicit val system = ActorSystem(Behaviors.empty, "fileIO")
     // needed for the future flatMap/onComplete in the end
     implicit val executionContext = system.executionContext
 
     val uri = "fileio_service"
+    //val uri = "localhost"
 
     val port = 8081
 
@@ -28,7 +30,7 @@ case object FileIOService {
       concat (
         get {
           path("createTables") {
-            slickdb.create()
+            //slickdb.create()
             println("Tables created")
             complete(HttpResponse.apply(StatusCode.int2StatusCode(200)))
           }

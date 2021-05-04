@@ -1,43 +1,28 @@
-package de.htwg.se.stratego.model.fileIODatabase.fileIOSlick
+package de.htwg.se.stratego.model.FileIODatabase.fileIOSlick
 
-import akka.http.javadsl.common.EntityStreamingSupport.json
-import de.htwg.se.stratego.model.fileIODatabase.fileIODatabaseInterface
-import play.api.libs.json.{JsArray, JsNumber, JsValue, Json}
+import de.htwg.se.stratego.model.FileIODatabase.fileIODatabaseInterface
+import play.api.libs.json.{JsArray, JsValue, Json}
 import slick.dbio.{DBIO, DBIOAction, Effect, NoStream}
+//import slick.driver.PostgresDriver.api._
+import slick.jdbc.PostgresProfile.api._
 import slick.jdbc.JdbcBackend.Database
-import slick.driver.PostgresDriver.api._
 
 import scala.concurrent.Await
 import scala.concurrent.duration.{Duration, DurationLong}
-import scala.util.parsing.json.{JSONArray, JSONObject}
 
-class FileIOSlick extends fileIODatabaseInterface {
+case class FileIOSlick() extends fileIODatabaseInterface {
   //val dbUrl: String = "jdbc:postgresql://localhost:5432/Softwarearchitektur"
-  val dbUrl: String = s"jdbc:postgresql://${sys.env.getOrElse("DATABASE_HOST", "localhost:5432")}/${sys.env.getOrElse("POSTGRES_DATABASE", "Softwarearchitektur")}" + "?serverTimezone=UTC&useSSL=false"
-  val user: String = sys.env.getOrElse("POSTGRES_USER", "postgres")
-  val password: String = sys.env.getOrElse("POSTGRES_PASSWORD", "12345678")
-
-  val database = Database.forURL(
-    url = dbUrl,
-    driver = "org.postgresql.Driver",
-    user = user,
-    password = password
-  )
+  val database = Database.forURL("jdbc:postgresql://db:5432/postgres", "postgres", "postgres", driver = "org.postgresql.Driver")
 
   val slickplayertable: TableQuery[SlickPlayer] = TableQuery[SlickPlayer]
   val slickmatchfieldtable: TableQuery[SlickMatchfield] = TableQuery[SlickMatchfield]
+ // val slicktesttable: TableQuery[SlickOnlyOneTable] = TableQuery[SlickOnlyOneTable]
+  val tables = List(slickplayertable, slickmatchfieldtable)
 
 
-
-  override def create(): Unit = {
-    val queries: DBIOAction[Unit, NoStream, Effect.Schema] = DBIO.seq(
-      slickplayertable.schema.createIfNotExists,
-      slickmatchfieldtable.schema.createIfNotExists
-    )
-    val setup = database.run(queries)
-    Await.result(setup, 5L.seconds)
-    println(s"Settings, databaseUrl: ${dbUrl}, databaseUser: ${user}, databasePassword: ${password}")
-  }
+  tables.foreach(e => Await.result(database.run(e.schema.createIfNotExists), Duration.Inf))
+  /*val test = 1
+  database.run(slicktesttable += test)*/
 
   override def delete(): Unit = {
     Await.ready(database.run(slickplayertable.delete), Duration.Inf)
@@ -52,7 +37,7 @@ class FileIOSlick extends fileIODatabaseInterface {
     val newPlayerIndex = (json \ "currentPlayerIndex").get.toString().toInt
     val players = (json \ "players").get.toString()
     val sizeOfMatchfield: Int = (json \ "matchField").as[JsArray].value.size
-    var matchfield = Matchfield(0, 0, 0, Option(""), Option(0), Option(0))
+    //var matchfield = Matchfield(0, 0, 0, Option(""), Option(0), Option(0))
     var figName: String = ""
     var figValue: Int = 0
     var colour: Int  = 0
@@ -68,12 +53,12 @@ class FileIOSlick extends fileIODatabaseInterface {
         figValue = 0
         colour = 0
       }
-      matchfield = Matchfield(0, row, col, Option(figName), Option(figValue), Option(colour))
-      database.run(slickmatchfieldtable += matchfield)
+      database.run(slickmatchfieldtable += (0, row, col, Option(figName), Option(figValue), Option(colour)))
     }
     database.run(slickplayertable += (0, newPlayerIndex, players))
+    readPlayer(1)
+    readMatchfield(1)
   }
-
   // load
   override def readPlayer(resid: Int): String = {
     val player@(id, playerIndex, players) = Await.result(database.run(slickplayertable.filter(_.id === resid).result.head), Duration.Inf)
@@ -82,37 +67,40 @@ class FileIOSlick extends fileIODatabaseInterface {
   }
 
   override def readMatchfield(resid: Int): String = {
-    val matchfield@(matchf) = Await.result(database.run(slickmatchfieldtable.filter(_.id === resid).result.head), Duration.Inf)
-    println(matchf.id + " " + matchf.row + " " + matchf.col + " " + matchf.figName.get + " " + matchf.figValue.get + " " + matchf.colour.get)
-    matchf.figName.get
+    val matchfield@(id, row, col, figName, figValue, colour) = Await.result(database.run(slickmatchfieldtable.filter(_.id === resid).result.head), Duration.Inf)
+    println(id + " " + row + " " + col + " " + figName.get + " " + figValue.get + " " + colour.get)
+    figName.get
   }
 
   /**
+ *
+ *def toJson(): Unit = {
+    *Json.obj(
+      *"currentPlayerIndex" -> JsNumber(currentPlayerIndex),
+      *"players" -> players,
+      *"matchField"-> Json.toJson(
+        *for{
+          *row <- 0 until matchField.fields.matrixSize
+          *col <- 0 until matchField.fields.matrixSize
+        *} yield {
+          *var obj = Json.obj(
+            *"row" -> row,
+            *"col" -> col
+          *)
+          *if(matchField.fields.field(row,col).isSet) {
+            *obj = obj.++(Json.obj(
+              *"figName" -> matchField.fields.field(row, col).character.get.figure.name,
+              *"figValue" -> matchField.fields.field(row, col).character.get.figure.value,
+              *"colour" -> matchField.fields.field(row, col).colour.get.value
+            *)
+            *)
+          *}
+          *obj
+   * }
+   * )
+   * )
+   * } */
 
-  def toJson(): Unit = {
-    Json.obj(
-      "currentPlayerIndex" -> JsNumber(currentPlayerIndex),
-      "players" -> players,
-      "matchField"-> Json.toJson(
-        for{
-          row <- 0 until matchField.fields.matrixSize
-          col <- 0 until matchField.fields.matrixSize
-        } yield {
-          var obj = Json.obj(
-            "row" -> row,
-            "col" -> col
-          )
-          if(matchField.fields.field(row,col).isSet) {
-            obj = obj.++(Json.obj(
-              "figName" -> matchField.fields.field(row, col).character.get.figure.name,
-              "figValue" -> matchField.fields.field(row, col).character.get.figure.value,
-              "colour" -> matchField.fields.field(row, col).colour.get.value
-            )
-            )
-          }
-          obj
-        }
-      )
-    )
-  } */
+
+  override def create(): Unit = ???
 }

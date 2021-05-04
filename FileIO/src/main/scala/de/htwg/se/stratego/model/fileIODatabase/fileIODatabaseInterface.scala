@@ -1,4 +1,4 @@
-package de.htwg.se.stratego.model.fileIODatabase
+package de.htwg.se.stratego.model.FileIODatabase
 
 trait fileIODatabaseInterface {
 
