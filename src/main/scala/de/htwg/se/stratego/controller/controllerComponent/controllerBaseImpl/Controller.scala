@@ -223,8 +223,6 @@ class Controller @Inject()(matchField:MatchFieldInterface) extends ControllerInt
         }
       }
     }
-    // load game and delete data in tables afterwards
-    //val dbfuture: Future[HttpResponse] = Http().singleRequest(HttpRequest(method = HttpMethods.GET, uri = s"http://${uri}:${port}/deletedb"))
     "load"
   }
 
@@ -301,5 +299,24 @@ class Controller @Inject()(matchField:MatchFieldInterface) extends ControllerInt
     val gamestate: String = Json.prettyPrint(matchFieldToJson(game.matchField, currentPlayerIndex, playerS))
     val dbfuture: Future[HttpResponse] = Http()
       .singleRequest(HttpRequest(method = HttpMethods.POST, uri = s"http://${uri}:${port}/savedb", entity = gamestate))
+  }
+
+  override def loaddb: Unit = {
+    val responseFuture: Future[HttpResponse] = Http().singleRequest(HttpRequest(uri = s"http://${uri}:${port}/loaddb"))
+    responseFuture.onComplete {
+      case Failure(_) => sys.error("HttpResponse failure")
+      case Success(res) => {
+        Unmarshal(res.entity).to[String].onComplete {
+          case Failure(_) => sys.error("Marshal failure")
+          case Success(result) => {
+            unpackJson(result)
+          }
+        }
+      }
+    }
+  }
+
+  override def deletedb: Unit = {
+    val responseFuture: Future[HttpResponse] = Http().singleRequest(HttpRequest(uri = s"http://${uri}:${port}/deletedb"))
   }
 }

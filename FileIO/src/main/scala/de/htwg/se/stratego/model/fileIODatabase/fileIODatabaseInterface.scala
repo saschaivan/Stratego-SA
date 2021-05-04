@@ -1,15 +1,15 @@
 package de.htwg.se.stratego.model.FileIODatabase
 
-trait fileIODatabaseInterface {
+import de.htwg.se.stratego.model.FileIODatabase.fileIOSlick.Matchfield
 
-  def create() : Unit
+import scala.collection.mutable.ListBuffer
+
+trait fileIODatabaseInterface {
 
   def update(game: String) : Unit
 
   def delete() : Unit
 
-  def readPlayer(resid: Int): String
-
-  def readMatchfield(resid: Int): String
+  def readMatchfield: String
 
 }

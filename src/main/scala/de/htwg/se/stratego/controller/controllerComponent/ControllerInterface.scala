@@ -30,6 +30,8 @@ trait ControllerInterface extends Publisher {
   def load:String
   def save:String
   def savedb: Unit
+  def loaddb: Unit
+  def deletedb: Unit
 }
 
 import scala.swing.event.Event

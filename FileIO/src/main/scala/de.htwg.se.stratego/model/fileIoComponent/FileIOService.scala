@@ -47,6 +47,12 @@ object FileIOService {
           }
         },
         get {
+          path("loaddb") {
+            println("load json from db")
+            complete(HttpEntity(ContentTypes.`application/json`, slickdb.readMatchfield))
+          }
+        },
+        get {
           path("deletedb") {
             slickdb.delete()
             println("data in tables deleted")
