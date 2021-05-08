@@ -1,4 +1,4 @@
-package de.htwg.se.stratego.model.FileIODatabase.fileIOSlick
+package de.htwg.se.stratego.model.fileIODatabase.fileIOSlick
 
 import slick.jdbc.PostgresProfile.api._
 import slick.lifted.ProvenShape

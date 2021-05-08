@@ -1,6 +1,6 @@
-package de.htwg.se.stratego.model.FileIODatabase.fileIOSlick
+package de.htwg.se.stratego.model.fileIODatabase.fileIOSlick
 
-import de.htwg.se.stratego.model.FileIODatabase.fileIODatabaseInterface
+import de.htwg.se.stratego.model.fileIODatabase.fileIODatabaseInterface
 import play.api.libs.json.{JsArray, JsNumber, JsObject, JsValue, Json}
 import slick.jdbc.PostgresProfile.api._
 import slick.jdbc.JdbcBackend.Database
@@ -11,9 +11,8 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
 
-case class FileIOSlick() extends fileIODatabaseInterface {
-  //val dbUrl: String = "jdbc:postgresql://localhost:5432/Softwarearchitektur"
-  val database = Database.forURL("jdbc:postgresql://db:5432/postgres", "postgres", "postgres", driver = "org.postgresql.Driver")
+class FileIOSlick extends fileIODatabaseInterface {
+  val database = Database.forURL("jdbc:postgresql://db:5432/FileIO", "postgres", "postgres", driver = "org.postgresql.Driver")
 
   val slickplayertable: TableQuery[SlickPlayer] = TableQuery[SlickPlayer]
   val slickmatchfieldtable: TableQuery[SlickMatchfield] = TableQuery[SlickMatchfield]
@@ -27,9 +26,8 @@ case class FileIOSlick() extends fileIODatabaseInterface {
     Await.ready(database.run(slickmatchfieldtable.delete), Duration.Inf)
   }
 
-  // insert (save)
   override def update(game: String): Unit = {
-    //val game = "{\n\n\"currentPlayerIndex\" : 0,\n\n\"players\" : \"Sascha Benni\",\n\n\"matchField\" : [ {\n\n\"row\" : 0,\n\n\"col\" : 0,\n\n\"figName\" : \"9\",\n\n\"figValue\" : 9,\n\n\"colour\" : 0\n\n}, {\n\n\"row\" : 0,\n\n\"col\" : 1\n\n}, {\n\n\"row\" : 0,\n\n\"col\" : 2,\n\n\"figName\" : \"6\",\n\n\"figValue\" : 6,\n\n\"colour\" : 0\n\n}, {\n\n\"row\" : 0,\n\n\"col\" : 3,\n\n\"figName\" : \"F\",\n\n\"figValue\" : 0,\n\n\"colour\" : 0\n\n}, {\n\n\"row\" : 1,\n\n\"col\" : 0\n\n}, {\n\n\"row\" : 1,\n\n\"col\" : 1,\n\n\"figName\" : \"8\",\n\n\"figValue\" : 8,\n\n\"colour\" : 0\n\n}, {\n\n\"row\" : 1,\n\n\"col\" : 2\n\n}, {\n\n\"row\" : 1,\n\n\"col\" : 3\n\n}, {\n\n\"row\" : 2,\n\n\"col\" : 0\n\n}, {\n\n\"row\" : 2,\n\n\"col\" : 1,\n\n\"figName\" : \"8\",\n\n\"figValue\" : 8,\n\n\"colour\" : 1\n\n}, {\n\n\"row\" : 2,\n\n\"col\" : 2\n\n}, {\n\n\"row\" : 2,\n\n\"col\" : 3\n\n}, {\n\n\"row\" : 3,\n\n\"col\" : 0,\n\n\"figName\" : \"9\",\n\n\"figValue\" : 9,\n\n\"colour\" : 1\n\n}, {\n\n\"row\" : 3,\n\n\"col\" : 1\n\n}, {\n\n\"row\" : 3,\n\n\"col\" : 2,\n\n\"figName\" : \"6\",\n\n\"figValue\" : 6,\n\n\"colour\" : 1\n\n}, {\n\n\"row\" : 3,\n\n\"col\" : 3,\n\n\"figName\" : \"F\",\n\n\"figValue\" : 0,\n\n\"colour\" : 1\n\n} ]\n\n}"
+    delete()
     println(game)
     val json: JsValue = Json.parse(game)
     val newPlayerIndex = (json \ "currentPlayerIndex").get.toString().toInt
@@ -57,7 +55,7 @@ case class FileIOSlick() extends fileIODatabaseInterface {
     database.run(slickplayertable += (0, newPlayerIndex, players, sizeOfMatchfield))
   }
 
-  override def readMatchfield(): String = {
+  override def read: String = {
     val player: (Int, Int, String, Int) = readPlayer
     val matchfield: ListBuffer[Matchfield] = readMatchfieldfromdb
     val string = Json.prettyPrint(Json.obj(
@@ -95,10 +93,11 @@ case class FileIOSlick() extends fileIODatabaseInterface {
   }
 
   def readMatchfieldfromdb: ListBuffer[Matchfield] = {
-    var matchfieldlist: ListBuffer[Matchfield] = ListBuffer.empty
+    val matchfieldlist: ListBuffer[Matchfield] = ListBuffer.empty
     Await.result(database.run(slickmatchfieldtable.result.map(_.foreach(f => matchfieldlist.append(Matchfield(f.id, f.row, f.col, f.figName, f.figValue, f.colour))))), Duration.Inf)
     matchfieldlist.foreach(f => println(f))
     matchfieldlist
   }
 
+  override def create(): Unit = ???
 }

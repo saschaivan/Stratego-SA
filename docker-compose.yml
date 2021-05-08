@@ -8,19 +8,32 @@ services:
       - "8082:8082"
     stdin_open: true
     tty: true
+
   db:
     image: postgres:latest
     restart: always
+    ports:
+      - "5432:5432"
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: postgres
+      POSTGRES_DB: FileIO
+
+  mongodb:
+    image: mongo:latest
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: rootpassword
+    ports:
+      - "27017:27017"
+
   fileio:
     container_name: "fileio_service"
     build:
       context: ./FileIO
     ports:
       - "8081:8081"
+
   root:
     container_name: "root_service"
     build: .
