@@ -76,10 +76,10 @@ object RootService extends Reactor {
   reactions += {
     case event: NewGame => postEvent("createNewMatchfield", controller.matchFieldToString + "\nCreated new matchfield\nPlease enter the names like (player1 player2)\n")
     case event: FieldChanged => postEvent("fieldChanged", controller.matchFieldToString)
-    case event: PlayerChanged => postEvent("playerChanged", "Hello " + controller.playerList(0) + " and " + controller.playerList(1) + "!\n")
+    case event: PlayerChanged => postEvent("playerChanged", "Hello " + controller.playerListBuffer(0) + " and " + controller.playerListBuffer(1) + "!\n")
     case event: MachtfieldInitialized => postEvent("machtfieldInitializied", "Matchfield initialized\n")
     case event: GameFinished => postEvent("gameFinished", "Game finished! " + controller.playerList(controller.currentPlayerIndex) + " has won the game!\n")
-    case event: PlayerSwitch => postEvent("playerSwitched", controller.playerList(controller.currentPlayerIndex) + " it's youre turn!\n")
+    case event: PlayerSwitch => postEvent("playerSwitched", controller.playerListBuffer(controller.currentPlayerIndex) + " it's youre turn!\n")
     case event: LoadGame => postEvent("loadGame", "Game loaded\n")
   }
 

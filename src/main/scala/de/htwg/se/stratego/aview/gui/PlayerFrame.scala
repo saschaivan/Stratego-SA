@@ -112,7 +112,6 @@ class PlayerFrame(controller:ControllerInterface) extends Frame{
     visible = false
     deafTo(controller)
     close()
-    //Thread.sleep(2000)
     new GameFrame(controller)
   }
 
