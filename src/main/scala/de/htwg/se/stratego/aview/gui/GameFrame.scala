@@ -257,12 +257,12 @@ class GameFrame(controller:ControllerInterface) extends Frame{
         foreground = new Color(73,82,89)
         controller.savedb
         redraw
-      })/*
+      })
       contents += new MenuItem(Action("Delete Data in Database") {
         foreground = new Color(73,82,89)
         controller.deletedb
         redraw
-      }) */
+      })
     }
   }
 

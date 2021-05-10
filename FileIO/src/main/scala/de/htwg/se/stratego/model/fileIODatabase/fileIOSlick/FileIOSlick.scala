@@ -1,6 +1,6 @@
 package de.htwg.se.stratego.model.fileIODatabase.fileIOSlick
 
-import de.htwg.se.stratego.model.fileIODatabase.fileIODatabaseInterface
+import de.htwg.se.stratego.model.fileIODatabase.FileIODatabaseInterface
 import play.api.libs.json.{JsArray, JsNumber, JsObject, JsValue, Json}
 import slick.jdbc.PostgresProfile.api._
 import slick.jdbc.JdbcBackend.Database
@@ -11,24 +11,17 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
 
-class FileIOSlick extends fileIODatabaseInterface {
+class FileIOSlick extends FileIODatabaseInterface {
   val database = Database.forURL("jdbc:postgresql://db:5432/FileIO", "postgres", "postgres", driver = "org.postgresql.Driver")
 
   val slickplayertable: TableQuery[SlickPlayer] = TableQuery[SlickPlayer]
   val slickmatchfieldtable: TableQuery[SlickMatchfield] = TableQuery[SlickMatchfield]
   val tables = List(slickplayertable, slickmatchfieldtable)
 
-
   tables.foreach(e => Await.result(database.run(e.schema.createIfNotExists), Duration.Inf))
 
-  override def delete(): Unit = {
-    Await.ready(database.run(slickplayertable.delete), Duration.Inf)
-    Await.ready(database.run(slickmatchfieldtable.delete), Duration.Inf)
-  }
-
-  override def update(game: String): Unit = {
+  override def update(id: Int, game: String): Unit = {
     delete()
-    println(game)
     val json: JsValue = Json.parse(game)
     val newPlayerIndex = (json \ "currentPlayerIndex").get.toString().toInt
     val players = (json \ "players").get.toString()
@@ -55,7 +48,7 @@ class FileIOSlick extends fileIODatabaseInterface {
     database.run(slickplayertable += (0, newPlayerIndex, players, sizeOfMatchfield))
   }
 
-  override def read: String = {
+  override def read(id: Int): String = {
     val player: (Int, Int, String, Int) = readPlayer
     val matchfield: ListBuffer[Matchfield] = readMatchfieldfromdb
     val string = Json.prettyPrint(Json.obj(
@@ -86,18 +79,24 @@ class FileIOSlick extends fileIODatabaseInterface {
     string
   }
 
-  def readPlayer: (Int, Int, String, Int) = {
+  private def readPlayer: (Int, Int, String, Int) = {
     val player@(id, playerIndex, players, sizeOfMatchfield) = Await.result(database.run(slickplayertable.result.head), Duration.Inf)
     println(id.toString + " " + playerIndex.toString + " " + players + " " + sizeOfMatchfield)
     (id, playerIndex, players, sizeOfMatchfield)
   }
 
-  def readMatchfieldfromdb: ListBuffer[Matchfield] = {
+  private def readMatchfieldfromdb: ListBuffer[Matchfield] = {
     val matchfieldlist: ListBuffer[Matchfield] = ListBuffer.empty
     Await.result(database.run(slickmatchfieldtable.result.map(_.foreach(f => matchfieldlist.append(Matchfield(f.id, f.row, f.col, f.figName, f.figValue, f.colour))))), Duration.Inf)
     matchfieldlist.foreach(f => println(f))
     matchfieldlist
   }
 
+  override def delete(): Unit = {
+    Await.ready(database.run(slickplayertable.delete), Duration.Inf)
+    Await.ready(database.run(slickmatchfieldtable.delete), Duration.Inf)
+  }
+
   override def create(): Unit = ???
+
 }

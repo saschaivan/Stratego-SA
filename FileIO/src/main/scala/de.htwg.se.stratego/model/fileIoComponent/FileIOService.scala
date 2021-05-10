@@ -8,8 +8,7 @@ import akka.http.scaladsl.model.{ContentTypes, HttpEntity, StatusCode}
 import akka.http.scaladsl.server.Directives._
 import com.google.inject.Guice
 import com.google.inject.name.Names
-import de.htwg.se.stratego.model.fileIODatabase.fileIODatabaseInterface
-import de.htwg.se.stratego.model.fileIODatabase.fileIOSlick.FileIOSlick
+import de.htwg.se.stratego.model.fileIODatabase.FileIODatabaseInterface
 import de.htwg.se.stratego.model.fileIODatabase.FileIOModule
 import de.htwg.se.stratego.model.fileIoComponent.fileIoJsonImpl.FileIO
 import net.codingwell.scalaguice.InjectorExtensions.ScalaInjector
@@ -21,13 +20,11 @@ object FileIOService {
 
     val fileIO = new FileIO
     val injector = Guice.createInjector(new FileIOModule)
-    val slickdb = injector.instance[fileIODatabaseInterface](Names.named("postgres"))
-    val mongo = injector.instance[fileIODatabaseInterface](Names.named("mongo"))
+    val db = injector.getInstance(classOf[FileIODatabaseInterface])
     implicit val system = ActorSystem(Behaviors.empty, "fileIO")
     implicit val executionContext = system.executionContext
 
     val uri = "fileio_service"
-    //val uri = "localhost"
 
     val port = 8081
 
@@ -35,7 +32,7 @@ object FileIOService {
       concat (
         get {
           path("createTables") {
-            //slickdb.create()
+            //mongo.create()
             println("Tables created")
             complete(HttpResponse.apply(StatusCode.int2StatusCode(200)))
           }
@@ -43,8 +40,9 @@ object FileIOService {
         post {
           path("savedb") {
             entity(as [String]) { game => {
-              //println(game)
-              slickdb.update(game)
+              println(game)
+              //db.create()
+              db.update(1, game)
               println("tables saved")
               complete(HttpResponse.apply(StatusCode.int2StatusCode(200)))
               }
@@ -54,13 +52,13 @@ object FileIOService {
         get {
           path("loaddb") {
             println("load json from db")
-            complete(HttpEntity(ContentTypes.`application/json`, slickdb.read))
+            complete(HttpEntity(ContentTypes.`application/json`, db.read(1)))
           }
         },
         get {
           path("deletedb") {
-            slickdb.delete()
-            println("data in tables deleted")
+            db.delete()
+            println("data in database deleted")
             complete(HttpResponse.apply(StatusCode.int2StatusCode(200)))
           }
         },

@@ -10,6 +10,7 @@ services:
     tty: true
 
   db:
+    container_name: "postgresdb"
     image: postgres:latest
     restart: always
     ports:
@@ -20,12 +21,15 @@ services:
       POSTGRES_DB: FileIO
 
   mongodb:
+    container_name: "mongodb"
     image: mongo:latest
+    restart: always
+    ports:
+      - "27017:27017"
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: rootpassword
-    ports:
-      - "27017:27017"
+      MONGO_INITDB_DATABASE: Mongodb
 
   fileio:
     container_name: "fileio_service"
