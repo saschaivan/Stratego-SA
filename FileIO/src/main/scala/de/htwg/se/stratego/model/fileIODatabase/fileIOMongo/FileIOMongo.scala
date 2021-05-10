@@ -22,6 +22,7 @@ class FileIOMongo extends FileIODatabaseInterface {
 
 
   override def update(id: Int, game: String): Unit = {
+    delete()
     val doc: Document = Document("_id" -> id, "game" -> game)
     observerInsertion(collection.insertOne(doc))
   }
@@ -36,7 +37,6 @@ class FileIOMongo extends FileIODatabaseInterface {
   override def read(id: Int): String = {
     val resultgame: Document = Await.result(collection.find(equal("_id", id)).first().head(), atMost = 10.second)
     val game: String = resultgame("game").asString().getValue
-    delete()
     game
   }
 
