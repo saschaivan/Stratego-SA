@@ -163,11 +163,11 @@ class GameFrame(controller:ControllerInterface) extends Frame{
 
   val status = new TextField(controller.statusString, 20)
 
-  val playerName: List[Player] = if(controller.playerListBuffer.isEmpty) controller.playerList else controller.playerListBuffer.toList
+  //val playerName: List[Player] = if(controller.playerListBuffer.isEmpty) controller.playerList else controller.playerListBuffer.toList
 
 
   val message = new TextPane {
-    text = playerName(controller.currentPlayerIndex) + "! It's your turn!"
+    text = controller.playerListBuffer(controller.currentPlayerIndex) + "! It's your turn!"
     editable = false
     foreground= colBlue
     font = defaultFont
@@ -198,7 +198,6 @@ class GameFrame(controller:ControllerInterface) extends Frame{
     add(matchfieldPanel, BorderPanel.Position.Center)
     add(controllPanel, BorderPanel.Position.East)
     add(statusPanel, BorderPanel.Position.South)
-    //border = BorderFactory.createEmptyBorder(20,20,20,20)
   }
 
   contents = mainPanel
@@ -272,8 +271,7 @@ class GameFrame(controller:ControllerInterface) extends Frame{
       column <- 0 until matchFieldSize
     } fields(row)(column).redraw
     status.text = controller.statusString
-
-    message.text = playerName(controller.currentPlayerIndex) + "! It's your turn!"
+    message.text = controller.playerListBuffer(controller.currentPlayerIndex) + "! It's your turn!"
     if(controller.currentPlayerIndex.equals(1)){
       message.foreground= colRed
     }else{

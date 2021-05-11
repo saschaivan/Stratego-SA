@@ -50,13 +50,9 @@ class Controller @Inject()(matchField:MatchFieldInterface) extends ControllerInt
 
   def setPlayers(input: String): String = {
     // allowed size of playerlistbuffer is 2, otherwise clear it
+    playerListBuffer.clear()
     for (i <- setPlayer(input)) {
-      if (playerListBuffer.size != 2)
         playerListBuffer.append(i)
-      else {
-        playerListBuffer.clear()
-        playerListBuffer.append(i)
-      }
     }
     nextState
     publish(new PlayerChanged)
@@ -227,7 +223,7 @@ class Controller @Inject()(matchField:MatchFieldInterface) extends ControllerInt
     val injector = Guice.createInjector(new StrategoModule)
     var newMatchField = injector.getInstance(classOf[MatchFieldInterface])
     val newPlayerIndex = (json \ "currentPlayerIndex").get.toString().toInt
-    val playerS = (json \ "players").get.toString()
+    val playerS = (json \ "players").get.toString().replaceAll("\"", "").replaceAll("\\\\", "")
     for(index <- 0 until matchField.fields.matrixSize * matchField.fields.matrixSize){
       val row = (json \\ "row")(index).as[Int]
       val col = (json \\ "col")(index).as[Int]
@@ -240,9 +236,7 @@ class Controller @Inject()(matchField:MatchFieldInterface) extends ControllerInt
     }
     game = game.copy(matchField = newMatchField)
     currentPlayerIndex = newPlayerIndex
-    for (i <- setPlayer(playerS)) {
-      playerListBuffer.append(i)
-    }
+    setPlayers(playerS)
     state = GameState(this)
     gameStatus=LOAD
     publish(new FieldChanged)
