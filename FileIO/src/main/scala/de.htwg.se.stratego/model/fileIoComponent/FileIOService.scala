@@ -7,11 +7,9 @@ import akka.http.scaladsl.Http
 import akka.http.scaladsl.model.{ContentTypes, HttpEntity, StatusCode}
 import akka.http.scaladsl.server.Directives._
 import com.google.inject.Guice
-import com.google.inject.name.Names
 import de.htwg.se.stratego.model.fileIODatabase.FileIODatabaseInterface
 import de.htwg.se.stratego.model.fileIODatabase.FileIOModule
 import de.htwg.se.stratego.model.fileIoComponent.fileIoJsonImpl.FileIO
-import net.codingwell.scalaguice.InjectorExtensions.ScalaInjector
 
 
 object FileIOService {
@@ -79,7 +77,6 @@ object FileIOService {
         }
 
       )
-
     val bindingFuture = Http().newServerAt(uri, port).bind(route)
   }
 }

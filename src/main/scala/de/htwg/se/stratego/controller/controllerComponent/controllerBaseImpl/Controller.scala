@@ -1,6 +1,5 @@
 package de.htwg.se.stratego.controller.controllerComponent.controllerBaseImpl
 
-
 import akka.actor.typed.ActorSystem
 import akka.actor.typed.javadsl.Behaviors
 import com.google.inject.{Guice, Inject}
@@ -17,10 +16,8 @@ import akka.http.scaladsl.unmarshalling.Unmarshal
 import de.htwg.se.stratego.controller.controllerComponent._
 import de.htwg.se.stratego.model.matchFieldComponent.matchFieldBaseImpl.{CharacterList, Colour, Field, Figure, Game, GameCharacter, MatchField, Matrix, Player}
 import play.api.libs.json.{JsNumber, JsObject, JsValue, Json}
-
 import scala.util.{Failure, Success}
-import scala.concurrent.Future
-
+import scala.concurrent.{Future}
 
 class Controller @Inject()(matchField:MatchFieldInterface) extends ControllerInterface with Publisher {
 
@@ -48,19 +45,14 @@ class Controller @Inject()(matchField:MatchFieldInterface) extends ControllerInt
   var state: ControllerState = EnterPlayer(this)
 
   def handle(input: String): String = {
-    //createTables()
     state.handle(input)
   }
 
   def setPlayers(input: String): String = {
     // allowed size of playerlistbuffer is 2, otherwise clear it
+    playerListBuffer.clear()
     for (i <- setPlayer(input)) {
-      if (playerListBuffer.size != 2)
         playerListBuffer.append(i)
-      else {
-        playerListBuffer.clear()
-        playerListBuffer.append(i)
-      }
     }
     nextState
     publish(new PlayerChanged)
@@ -231,7 +223,7 @@ class Controller @Inject()(matchField:MatchFieldInterface) extends ControllerInt
     val injector = Guice.createInjector(new StrategoModule)
     var newMatchField = injector.getInstance(classOf[MatchFieldInterface])
     val newPlayerIndex = (json \ "currentPlayerIndex").get.toString().toInt
-    val playerS = (json \ "players").get.toString()
+    val playerS = (json \ "players").get.toString().replaceAll("\"", "").replaceAll("\\\\", "")
     for(index <- 0 until matchField.fields.matrixSize * matchField.fields.matrixSize){
       val row = (json \\ "row")(index).as[Int]
       val col = (json \\ "col")(index).as[Int]
@@ -244,9 +236,7 @@ class Controller @Inject()(matchField:MatchFieldInterface) extends ControllerInt
     }
     game = game.copy(matchField = newMatchField)
     currentPlayerIndex = newPlayerIndex
-    for (i <- setPlayer(playerS)) {
-      playerListBuffer.append(i)
-    }
+    setPlayers(playerS)
     state = GameState(this)
     gameStatus=LOAD
     publish(new FieldChanged)
