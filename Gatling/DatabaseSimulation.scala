@@ -33,50 +33,51 @@ class DatabaseSimulation extends Simulation {
     .acceptEncodingHeader("gzip, deflate")
     .userAgentHeader("Mozilla/5.0 (Macintosh; Intel Mac OS X 10.8; rv:16.0) Gecko/20100101 Firefox/16.0")
 
-  // A scenario is a chain of requests and pauses
-  val spike = scenario("Database load/save - Spike")
-    .exec(
+  object Save {
+    val saveRequest = exec(
       http("Database save")
         .post("/savedb")
         .body(StringBody("{\n  \"currentPlayerIndex\" : 0,\n  \"players\" : \"vdsvds vsdvds\",\n  \"matchField\" : [ {\n    \"row\" : 0,\n    \"col\" : 0,\n    \"figName\" : \"9\",\n    \"figValue\" : 9,\n    \"colour\" : 0\n  }, {\n    \"row\" : 0,\n    \"col\" : 1,\n    \"figName\" : \"8\",\n    \"figValue\" : 8,\n    \"colour\" : 0\n  }, {\n    \"row\" : 0,\n    \"col\" : 2,\n    \"figName\" : \"6\",\n    \"figValue\" : 6,\n    \"colour\" : 0\n  }, {\n    \"row\" : 0,\n    \"col\" : 3,\n    \"figName\" : \"F\",\n    \"figValue\" : 0,\n    \"colour\" : 0\n  }, {\n    \"row\" : 1,\n    \"col\" : 0\n  }, {\n    \"row\" : 1,\n    \"col\" : 1\n  }, {\n    \"row\" : 1,\n    \"col\" : 2\n  }, {\n    \"row\" : 1,\n    \"col\" : 3\n  }, {\n    \"row\" : 2,\n    \"col\" : 0\n  }, {\n    \"row\" : 2,\n    \"col\" : 1\n  }, {\n    \"row\" : 2,\n    \"col\" : 2\n  }, {\n    \"row\" : 2,\n    \"col\" : 3\n  }, {\n    \"row\" : 3,\n    \"col\" : 0,\n    \"figName\" : \"9\",\n    \"figValue\" : 9,\n    \"colour\" : 1\n  }, {\n    \"row\" : 3,\n    \"col\" : 1,\n    \"figName\" : \"8\",\n    \"figValue\" : 8,\n    \"colour\" : 1\n  }, {\n    \"row\" : 3,\n    \"col\" : 2,\n    \"figName\" : \"6\",\n    \"figValue\" : 6,\n    \"colour\" : 1\n  }, {\n    \"row\" : 3,\n    \"col\" : 3,\n    \"figName\" : \"F\",\n    \"figValue\" : 0,\n    \"colour\" : 1\n  } ]\n}")).asJson
     )
-    .exec(
+  }
+
+  object Load {
+    val loadRequest = exec(
       http("Database load")
         .get("/loaddb")
     )
+  }
+
+  // A scenario is a chain of requests and pauses
+  val spike = scenario("Database load/save - Spike")
+    .exec(Save.saveRequest)
+    .pause(3)
+    .exec(Load.loadRequest)
 
   val endurance = scenario("Database load/save - Endurance")
-    .repeat(100, "i") {
-      exec(
-        http("Database save")
-          .post("/savedb")
-          .body(StringBody("{\n  \"currentPlayerIndex\" : 0,\n  \"players\" : \"vdsvds vsdvds\",\n  \"matchField\" : [ {\n    \"row\" : 0,\n    \"col\" : 0,\n    \"figName\" : \"9\",\n    \"figValue\" : 9,\n    \"colour\" : 0\n  }, {\n    \"row\" : 0,\n    \"col\" : 1,\n    \"figName\" : \"8\",\n    \"figValue\" : 8,\n    \"colour\" : 0\n  }, {\n    \"row\" : 0,\n    \"col\" : 2,\n    \"figName\" : \"6\",\n    \"figValue\" : 6,\n    \"colour\" : 0\n  }, {\n    \"row\" : 0,\n    \"col\" : 3,\n    \"figName\" : \"F\",\n    \"figValue\" : 0,\n    \"colour\" : 0\n  }, {\n    \"row\" : 1,\n    \"col\" : 0\n  }, {\n    \"row\" : 1,\n    \"col\" : 1\n  }, {\n    \"row\" : 1,\n    \"col\" : 2\n  }, {\n    \"row\" : 1,\n    \"col\" : 3\n  }, {\n    \"row\" : 2,\n    \"col\" : 0\n  }, {\n    \"row\" : 2,\n    \"col\" : 1\n  }, {\n    \"row\" : 2,\n    \"col\" : 2\n  }, {\n    \"row\" : 2,\n    \"col\" : 3\n  }, {\n    \"row\" : 3,\n    \"col\" : 0,\n    \"figName\" : \"9\",\n    \"figValue\" : 9,\n    \"colour\" : 1\n  }, {\n    \"row\" : 3,\n    \"col\" : 1,\n    \"figName\" : \"8\",\n    \"figValue\" : 8,\n    \"colour\" : 1\n  }, {\n    \"row\" : 3,\n    \"col\" : 2,\n    \"figName\" : \"6\",\n    \"figValue\" : 6,\n    \"colour\" : 1\n  }, {\n    \"row\" : 3,\n    \"col\" : 3,\n    \"figName\" : \"F\",\n    \"figValue\" : 0,\n    \"colour\" : 1\n  } ]\n}")).asJson
-      )
-      .exec(
-        http("Database load")
-          .get("/loaddb")
-      )
-    }
+    .exec(Save.saveRequest)
+    .pause(3)
+    .exec(Load.loadRequest)
 
 
   val stress = scenario("Database load/save - Stress")
-    .exec(
-      http("Database save")
-        .post("/savedb")
-        .body(StringBody("{\n  \"currentPlayerIndex\" : 0,\n  \"players\" : \"vdsvds vsdvds\",\n  \"matchField\" : [ {\n    \"row\" : 0,\n    \"col\" : 0,\n    \"figName\" : \"9\",\n    \"figValue\" : 9,\n    \"colour\" : 0\n  }, {\n    \"row\" : 0,\n    \"col\" : 1,\n    \"figName\" : \"8\",\n    \"figValue\" : 8,\n    \"colour\" : 0\n  }, {\n    \"row\" : 0,\n    \"col\" : 2,\n    \"figName\" : \"6\",\n    \"figValue\" : 6,\n    \"colour\" : 0\n  }, {\n    \"row\" : 0,\n    \"col\" : 3,\n    \"figName\" : \"F\",\n    \"figValue\" : 0,\n    \"colour\" : 0\n  }, {\n    \"row\" : 1,\n    \"col\" : 0\n  }, {\n    \"row\" : 1,\n    \"col\" : 1\n  }, {\n    \"row\" : 1,\n    \"col\" : 2\n  }, {\n    \"row\" : 1,\n    \"col\" : 3\n  }, {\n    \"row\" : 2,\n    \"col\" : 0\n  }, {\n    \"row\" : 2,\n    \"col\" : 1\n  }, {\n    \"row\" : 2,\n    \"col\" : 2\n  }, {\n    \"row\" : 2,\n    \"col\" : 3\n  }, {\n    \"row\" : 3,\n    \"col\" : 0,\n    \"figName\" : \"9\",\n    \"figValue\" : 9,\n    \"colour\" : 1\n  }, {\n    \"row\" : 3,\n    \"col\" : 1,\n    \"figName\" : \"8\",\n    \"figValue\" : 8,\n    \"colour\" : 1\n  }, {\n    \"row\" : 3,\n    \"col\" : 2,\n    \"figName\" : \"6\",\n    \"figValue\" : 6,\n    \"colour\" : 1\n  }, {\n    \"row\" : 3,\n    \"col\" : 3,\n    \"figName\" : \"F\",\n    \"figValue\" : 0,\n    \"colour\" : 1\n  } ]\n}")).asJson
-    )
-    .exec(
-      http("Database load")
-        .get("/loaddb")
-    )
+    .exec(Save.saveRequest)
+    .pause(3)
+    .exec(Load.loadRequest)
 
+  val load = scenario("Database load/save - Load")
+    .exec(Save.saveRequest)
+    .pause(3)
+    .exec(Load.loadRequest)
 
-  setUp(
-    spike.inject(atOnceUsers(1000))
-      andThen(
-        endurance.inject(atOnceUsers(1))
-          .andThen(
-            stress.inject(rampUsersPerSec(1).to(500).during(1.minutes))
-          )))
-      .protocols(httpProtocol)
+  val volume = scenario("Database load/save - Volume")
+      .exec(Save.saveRequest)
+
+  setUp(spike.inject(nothingFor(5.seconds), atOnceUsers(1000))
+          .andThen(endurance.inject(constantUsersPerSec(10).during(5.minute))
+          .andThen(stress.inject(rampUsersPerSec(1).to(500).during(1.minutes))
+          .andThen(load.inject(atOnceUsers(2))
+          .andThen(volume.inject(atOnceUsers(1000)))))))
+          .protocols(httpProtocol)
+
 }

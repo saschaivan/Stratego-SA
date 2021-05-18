@@ -1,0 +1,10 @@
+{
+  "simulation": "computerdatabase.DatabaseSimulation",
+  "simulationId": "databasesimulation",
+  "start": 1621365584886,
+  "description": "",
+  "scenarios": ["Database load/save - Spike", "Database load/save - Endurance", "Database load/save - Stress", "Database load/save - Load", "Database load/save - Volume"],
+  "assertions": [
+
+  ]
+}

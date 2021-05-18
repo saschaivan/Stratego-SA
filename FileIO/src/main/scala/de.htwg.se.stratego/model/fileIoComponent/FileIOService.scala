@@ -7,8 +7,7 @@ import akka.http.scaladsl.Http
 import akka.http.scaladsl.model.{ContentTypes, HttpEntity, StatusCode}
 import akka.http.scaladsl.server.Directives._
 import com.google.inject.Guice
-import de.htwg.se.stratego.model.fileIODatabase.FileIODatabaseInterface
-import de.htwg.se.stratego.model.fileIODatabase.FileIOModule
+import de.htwg.se.stratego.model.fileIODatabase.{FileIODatabaseInterface, FileIODatabaseProxy, FileIOModule}
 import de.htwg.se.stratego.model.fileIoComponent.fileIoJsonImpl.FileIO
 
 
@@ -19,6 +18,7 @@ object FileIOService {
     val fileIO = new FileIO
     val injector = Guice.createInjector(new FileIOModule)
     val db = injector.getInstance(classOf[FileIODatabaseInterface])
+    //val db = new FileIODatabaseProxy
     implicit val system = ActorSystem(Behaviors.empty, "fileIO")
     implicit val executionContext = system.executionContext
 
@@ -30,7 +30,7 @@ object FileIOService {
       concat (
         get {
           path("createTables") {
-            //mongo.create()
+            //db.create()
             println("Tables created")
             complete(HttpResponse.apply(StatusCode.int2StatusCode(200)))
           }
@@ -38,10 +38,9 @@ object FileIOService {
         post {
           path("savedb") {
             entity(as [String]) { game => {
-              println(game)
-              //db.create()
+              //println(game)
               db.update(1, game)
-              println("tables saved")
+              //println("tables saved")
               complete(HttpResponse.apply(StatusCode.int2StatusCode(200)))
               }
             }
@@ -49,7 +48,7 @@ object FileIOService {
         },
         get {
           path("loaddb") {
-            println("load json from db")
+            //println("load json from db")
             complete(HttpEntity(ContentTypes.`application/json`, db.read(1)))
           }
         },

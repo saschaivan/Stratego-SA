@@ -13,13 +13,9 @@ import scala.concurrent.duration.DurationInt
 class FileIOMongo extends FileIODatabaseInterface {
 
   val connectionString: String = "mongodb://root:rootpassword@mongodb:27017/?authSource=admin"
-
   val mongoClient: MongoClient = MongoClient(connectionString)
-
   val database: MongoDatabase = mongoClient.getDatabase("Mongodb")
-
   val collection: MongoCollection[Document] = database.getCollection("FileIO")
-
 
   override def update(id: Int, game: String): Unit = {
     delete()

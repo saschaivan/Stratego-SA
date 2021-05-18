@@ -4,16 +4,16 @@ import de.htwg.se.stratego.model.fileIODatabase.FileIODatabaseInterface
 import play.api.libs.json.{JsArray, JsNumber, JsObject, JsValue, Json}
 import slick.jdbc.PostgresProfile.api._
 import slick.jdbc.JdbcBackend.Database
-import scala.collection.mutable.ListBuffer
 
+import scala.collection.mutable.ListBuffer
 import scala.collection.mutable.ListBuffer
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
 
 class FileIOSlick extends FileIODatabaseInterface {
-  val database = Database.forURL("jdbc:postgresql://db:5432/FileIO", "postgres", "postgres", driver = "org.postgresql.Driver")
 
+  val database = Database.forURL("jdbc:postgresql://db:5432/FileIO", "postgres", "postgres", driver = "org.postgresql.Driver")
   val slickplayertable: TableQuery[SlickPlayer] = TableQuery[SlickPlayer]
   val slickmatchfieldtable: TableQuery[SlickMatchfield] = TableQuery[SlickMatchfield]
   val tables = List(slickplayertable, slickmatchfieldtable)
@@ -75,20 +75,20 @@ class FileIOSlick extends FileIODatabaseInterface {
           })
           obj
         })))
-    println(string)
+    //println(string)
     string
   }
 
   private def readPlayer: (Int, Int, String, Int) = {
     val player@(id, playerIndex, players, sizeOfMatchfield) = Await.result(database.run(slickplayertable.result.head), Duration.Inf)
-    println(id.toString + " " + playerIndex.toString + " " + players + " " + sizeOfMatchfield)
+    //println(id.toString + " " + playerIndex.toString + " " + players + " " + sizeOfMatchfield)
     (id, playerIndex, players, sizeOfMatchfield)
   }
 
   private def readMatchfieldfromdb: ListBuffer[Matchfield] = {
     val matchfieldlist: ListBuffer[Matchfield] = ListBuffer.empty
     Await.result(database.run(slickmatchfieldtable.result.map(_.foreach(f => matchfieldlist.append(Matchfield(f.id, f.row, f.col, f.figName, f.figValue, f.colour))))), Duration.Inf)
-    matchfieldlist.foreach(f => println(f))
+    //matchfieldlist.foreach(f => println(f))
     matchfieldlist
   }
 
