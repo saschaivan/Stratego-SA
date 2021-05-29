@@ -3,14 +3,17 @@ package de.htwg.se.stratego.model.fileIODatabase.fileIOMongo
 import de.htwg.se.stratego.model.fileIODatabase.FileIODatabaseInterface
 import org.mongodb.scala._
 import org.mongodb.scala.model.Filters.equal
-import org.mongodb.scala.model.Updates.set
 import org.mongodb.scala.result.{DeleteResult, InsertOneResult, UpdateResult}
-
-import scala.concurrent.Await
+import akka.actor.typed.ActorSystem
+import akka.actor.typed.scaladsl.Behaviors
+import scala.concurrent.{Await, ExecutionContextExecutor, Future}
 import scala.concurrent.duration.DurationInt
 
 
 class FileIOMongo extends FileIODatabaseInterface {
+
+  implicit val system: ActorSystem[Nothing] = ActorSystem(Behaviors.empty, "SingleRequest")
+  implicit val executionContext: ExecutionContextExecutor = system.executionContext
 
   val connectionString: String = "mongodb://root:rootpassword@mongodb:27017/?authSource=admin"
   val mongoClient: MongoClient = MongoClient(connectionString)
@@ -30,9 +33,9 @@ class FileIOMongo extends FileIODatabaseInterface {
     )
   }
 
-  override def read(id: Int): String = {
+  override def read(id: Int): Future[String] = {
     val resultgame: Document = Await.result(collection.find(equal("_id", id)).first().head(), atMost = 10.second)
-    val game: String = resultgame("game").asString().getValue
+    val game: Future[String] = Future(resultgame("game").asString().getValue)
     game
   }
 

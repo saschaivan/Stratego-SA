@@ -2,6 +2,9 @@ package de.htwg.se.stratego.model.fileIODatabase
 
 import com.google.inject.Guice
 
+import scala.concurrent.{Await, Future}
+import scala.concurrent.duration.Duration
+
 class FileIODatabaseProxy {
 
   val injector = Guice.createInjector(new FileIOModule)
@@ -13,5 +16,5 @@ class FileIODatabaseProxy {
 
   def delete(): Unit = db.delete()
 
-  def read(id: Int): String = db.read(id)
+  def read(id: Int): Future[String] = db.read(id)
 }

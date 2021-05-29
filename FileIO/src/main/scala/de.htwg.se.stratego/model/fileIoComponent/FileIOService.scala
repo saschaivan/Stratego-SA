@@ -10,6 +10,9 @@ import com.google.inject.Guice
 import de.htwg.se.stratego.model.fileIODatabase.{FileIODatabaseInterface, FileIODatabaseProxy, FileIOModule}
 import de.htwg.se.stratego.model.fileIoComponent.fileIoJsonImpl.FileIO
 
+import scala.concurrent.Await
+import scala.concurrent.duration.Duration
+
 
 object FileIOService {
 
@@ -49,7 +52,7 @@ object FileIOService {
         get {
           path("loaddb") {
             //println("load json from db")
-            complete(HttpEntity(ContentTypes.`application/json`, db.read(1)))
+            complete(HttpEntity(ContentTypes.`application/json`, Await.result(db.read(1), Duration.Inf)))
           }
         },
         get {

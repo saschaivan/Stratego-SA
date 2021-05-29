@@ -1,5 +1,7 @@
 package de.htwg.se.stratego.model.fileIODatabase
 
+import scala.concurrent.Future
+
 trait FileIODatabaseInterface {
 
   def create(): Unit
@@ -8,6 +10,6 @@ trait FileIODatabaseInterface {
 
   def delete() : Unit
 
-  def read(id: Int): String
+  def read(id: Int): Future[String]
 
 }

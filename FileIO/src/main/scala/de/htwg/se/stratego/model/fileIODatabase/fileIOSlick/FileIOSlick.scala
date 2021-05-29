@@ -8,7 +8,7 @@ import slick.jdbc.JdbcBackend.Database
 import scala.collection.mutable.ListBuffer
 import scala.collection.mutable.ListBuffer
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Await
+import scala.concurrent.{Await, Future}
 import scala.concurrent.duration.Duration
 
 class FileIOSlick extends FileIODatabaseInterface {
@@ -48,10 +48,10 @@ class FileIOSlick extends FileIODatabaseInterface {
     database.run(slickplayertable += (0, newPlayerIndex, players, sizeOfMatchfield))
   }
 
-  override def read(id: Int): String = {
+  override def read(id: Int): Future[String] = {
     val player: (Int, Int, String, Int) = readPlayer
     val matchfield: ListBuffer[Matchfield] = readMatchfieldfromdb
-    val string = Json.prettyPrint(Json.obj(
+    val string = Future(Json.prettyPrint(Json.obj(
       "currentPlayerIndex" -> JsNumber(player._2),
       "players" -> player._3,
       "matchField" -> Json.toJson(
@@ -74,7 +74,7 @@ class FileIOSlick extends FileIODatabaseInterface {
             }
           })
           obj
-        })))
+        }))))
     //println(string)
     string
   }
