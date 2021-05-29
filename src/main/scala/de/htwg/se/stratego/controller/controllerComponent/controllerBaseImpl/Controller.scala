@@ -206,14 +206,12 @@ class Controller @Inject()(matchField:MatchFieldInterface) extends ControllerInt
     val responseFuture: Future[HttpResponse] = Http().singleRequest(HttpRequest(uri = s"http://${uri}:${port}/json"))
     responseFuture.onComplete {
       case Failure(_) => sys.error("HttpResponse failure")
-      case Success(res) => {
+      case Success(res) =>
         Unmarshal(res.entity).to[String].onComplete {
           case Failure(_) => sys.error("Marshal failure")
-          case Success(result) => {
+          case Success(result) =>
             unpackJson(result)
-          }
         }
-      }
     }
     "load"
   }
