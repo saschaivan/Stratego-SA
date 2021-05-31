@@ -6,9 +6,9 @@ trait FileIODatabaseInterface {
 
   def create(): Unit
 
-  def update(id: Int, game: String) : Unit
+  def update(id: Int, game: Future[String]) : Unit
 
-  def delete() : Unit
+  def delete() : Future[Any]
 
   def read(id: Int): Future[String]
 

@@ -9,8 +9,8 @@ class FileIOModule extends AbstractModule with ScalaModule {
 
   override def configure(): Unit = {
 
-    //bind[FileIODatabaseInterface].to[FileIOMongo]
-    bind[FileIODatabaseInterface].to[FileIOSlick]
+    bind[FileIODatabaseInterface].to[FileIOMongo]
+    //bind[FileIODatabaseInterface].to[FileIOSlick]
 
   }
 }

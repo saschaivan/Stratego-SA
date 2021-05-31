@@ -10,7 +10,7 @@ import com.google.inject.Guice
 import de.htwg.se.stratego.model.fileIODatabase.{FileIODatabaseInterface, FileIODatabaseProxy, FileIOModule}
 import de.htwg.se.stratego.model.fileIoComponent.fileIoJsonImpl.FileIO
 
-import scala.concurrent.Await
+import scala.concurrent.{Await, Future}
 import scala.concurrent.duration.Duration
 
 
@@ -20,8 +20,8 @@ object FileIOService {
 
     val fileIO = new FileIO
     val injector = Guice.createInjector(new FileIOModule)
-    val db = injector.getInstance(classOf[FileIODatabaseInterface])
-    //val db = new FileIODatabaseProxy
+    //val db = injector.getInstance(classOf[FileIODatabaseInterface])
+    val db = new FileIODatabaseProxy
     implicit val system = ActorSystem(Behaviors.empty, "fileIO")
     implicit val executionContext = system.executionContext
 
@@ -42,7 +42,7 @@ object FileIOService {
           path("savedb") {
             entity(as [String]) { game => {
               //println(game)
-              db.update(1, game)
+              db.update(1, Future(game))
               //println("tables saved")
               complete(HttpResponse.apply(StatusCode.int2StatusCode(200)))
               }

@@ -1,13 +1,16 @@
 package de.htwg.se.stratego.model.fileIODatabase.fileIOMongo
 
+import scala.util.{Failure, Success, Try}
 import de.htwg.se.stratego.model.fileIODatabase.FileIODatabaseInterface
 import org.mongodb.scala._
 import org.mongodb.scala.model.Filters.equal
 import org.mongodb.scala.result.{DeleteResult, InsertOneResult, UpdateResult}
 import akka.actor.typed.ActorSystem
 import akka.actor.typed.scaladsl.Behaviors
+
 import scala.concurrent.{Await, ExecutionContextExecutor, Future}
-import scala.concurrent.duration.DurationInt
+import scala.concurrent.duration.{Duration, DurationInt}
+import scala.util.Try
 
 
 class FileIOMongo extends FileIODatabaseInterface {
@@ -20,17 +23,22 @@ class FileIOMongo extends FileIODatabaseInterface {
   val database: MongoDatabase = mongoClient.getDatabase("Mongodb")
   val collection: MongoCollection[Document] = database.getCollection("FileIO")
 
-  override def update(id: Int, game: String): Unit = {
+  override def update(id: Int, game: Future[String]): Unit = {
     delete()
-    val doc: Document = Document("_id" -> id, "game" -> game)
-    observerInsertion(collection.insertOne(doc))
+    game.onComplete((value: Try[String]) => {
+      value match {
+        case Success(value) => {
+          val doc: Document = Document("_id" -> id, "game" -> value)
+          observerInsertion(collection.insertOne(doc))
+        }
+        case Failure(e) => println("game is not available: " + e)
+      }
+    })
+
   }
 
-  override def delete(): Unit = {
-    collection.deleteOne(equal("_id", 1)).subscribe(
-      (dr: DeleteResult) => print(s"Deleted document with id 1\n"),
-      (e: Throwable) => print(s"Error when deleting the document with id 1: $e\n")
-    )
+  override def delete(): Future[Any] = {
+    collection.deleteOne(equal("_id", 1)).toFuture()
   }
 
   override def read(id: Int): Future[String] = {

@@ -5,16 +5,16 @@ import com.google.inject.Guice
 import scala.concurrent.{Await, Future}
 import scala.concurrent.duration.Duration
 
-class FileIODatabaseProxy {
+class FileIODatabaseProxy extends FileIODatabaseInterface {
 
   val injector = Guice.createInjector(new FileIOModule)
   val db = injector.getInstance(classOf[FileIODatabaseInterface])
 
   def create(): Unit = db.create
 
-  def update(id: Int, game: String): Unit = db.update(id, game)
+  def update(id: Int, game: Future[String]): Unit = db.update(id, game)
 
-  def delete(): Unit = db.delete()
+  def delete(): Future[Any] = db.delete()
 
   def read(id: Int): Future[String] = db.read(id)
 }

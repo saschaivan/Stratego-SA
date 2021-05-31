@@ -10,6 +10,7 @@ import scala.collection.mutable.ListBuffer
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{Await, Future}
 import scala.concurrent.duration.Duration
+import scala.util.{Failure, Success, Try}
 
 class FileIOSlick extends FileIODatabaseInterface {
 
@@ -20,32 +21,39 @@ class FileIOSlick extends FileIODatabaseInterface {
 
   tables.foreach(e => Await.result(database.run(e.schema.createIfNotExists), Duration.Inf))
 
-  override def update(id: Int, game: String): Unit = {
+  override def update(id: Int, game: Future[String]): Unit = {
     delete()
-    val json: JsValue = Json.parse(game)
-    val newPlayerIndex = (json \ "currentPlayerIndex").get.toString().toInt
-    val players = (json \ "players").get.toString()
-    val sizeOfMatchfield: Int = (json \ "matchField").as[JsArray].value.size
-    var matchfield = Matchfield(0, 0, 0, Option(""), Option(0), Option(0))
-    var figName: String = ""
-    var figValue: Int = 0
-    var colour: Int = 0
-    for (index <- 0 until sizeOfMatchfield) {
-      val row = (json \\ "row") (index).as[Int]
-      val col = (json \\ "col") (index).as[Int]
-      if (((json \ "matchField") (index) \\ "figName").nonEmpty) {
-        figName = ((json \ "matchField") (index) \ "figName").as[String]
-        figValue = ((json \ "matchField") (index) \ "figValue").as[Int]
-        colour = ((json \ "matchField") (index) \ "colour").as[Int]
-      } else {
-        figName = ""
-        figValue = 0
-        colour = 0
+    game.onComplete((value: Try[String]) => {
+      value match {
+        case Success(value) => {
+          val json: JsValue = Json.parse(value)
+          val newPlayerIndex = (json \ "currentPlayerIndex").get.toString().toInt
+          val players = (json \ "players").get.toString()
+          val sizeOfMatchfield: Int = (json \ "matchField").as[JsArray].value.size
+          var matchfield = Matchfield(0, 0, 0, Option(""), Option(0), Option(0))
+          var figName: String = ""
+          var figValue: Int = 0
+          var colour: Int = 0
+          for (index <- 0 until sizeOfMatchfield) {
+            val row = (json \\ "row") (index).as[Int]
+            val col = (json \\ "col") (index).as[Int]
+            if (((json \ "matchField") (index) \\ "figName").nonEmpty) {
+              figName = ((json \ "matchField") (index) \ "figName").as[String]
+              figValue = ((json \ "matchField") (index) \ "figValue").as[Int]
+              colour = ((json \ "matchField") (index) \ "colour").as[Int]
+            } else {
+              figName = ""
+              figValue = 0
+              colour = 0
+            }
+            matchfield = Matchfield(0, row, col, Option(figName), Option(figValue), Option(colour))
+            database.run(slickmatchfieldtable += matchfield)
+          }
+          database.run(slickplayertable += (0, newPlayerIndex, players, sizeOfMatchfield))
+        }
+        case Failure(e) => println("game is not available: " + e)
       }
-      matchfield = Matchfield(0, row, col, Option(figName), Option(figValue), Option(colour))
-      database.run(slickmatchfieldtable += matchfield)
-    }
-    database.run(slickplayertable += (0, newPlayerIndex, players, sizeOfMatchfield))
+    })
   }
 
   override def read(id: Int): Future[String] = {
@@ -92,9 +100,9 @@ class FileIOSlick extends FileIODatabaseInterface {
     matchfieldlist
   }
 
-  override def delete(): Unit = {
-    Await.ready(database.run(slickplayertable.delete), Duration.Inf)
-    Await.ready(database.run(slickmatchfieldtable.delete), Duration.Inf)
+  override def delete(): Future[Any] = {
+    database.run(slickplayertable.delete)
+    database.run(slickmatchfieldtable.delete)
   }
 
   override def create(): Unit = ???
