@@ -6,7 +6,7 @@ import scala.swing.Button
 
 
 val bu = new Button{
-  font.deriveFont(2,99)
+  font.deriveFont(2,100)
 }
 
 
