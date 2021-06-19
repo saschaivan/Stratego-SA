@@ -21,4 +21,3 @@ libraryDependencies ++= Seq(
   "com.typesafe.akka" %% "akka-http-spray-json" % AkkaHttpVersion
 )
 
-coverageExcludedPackages := ".*Tui.*;.*TuiService.*"
