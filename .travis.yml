@@ -11,7 +11,3 @@ script:
 
 after_success:
 - sbt coverageReport coveralls
-- cd Tui
-- sbt coverageReport coveralls
-- cd ../FileIO
-- sbt coverageReport coveralls
