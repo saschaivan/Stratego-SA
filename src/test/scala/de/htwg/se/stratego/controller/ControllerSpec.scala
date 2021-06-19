@@ -14,7 +14,9 @@ class ControllerSpec extends WordSpec with Matchers {
       val controller1 = new Controller(matchField)
       val controller2 = new Controller(matchField)
       val controller3 = new Controller(matchField)
+      val controller4 = new Controller(matchField)
       controller3.initMatchfield()
+      controller4.initMatchfield()
 
 
       val characterList = new CharacterList(4)
@@ -90,8 +92,16 @@ class ControllerSpec extends WordSpec with Matchers {
       "can get size" in {
         controller.getSize should be (4)
       }
-      "can save the game" in {
-        controller.save should be ("save")
+      "create empty Matchfield" in {
+        controller.createEmptyMatchfield(4) should be ("created new matchfield\nPlease enter the names like (player1 player2)")
+      }
+      "undo" in {
+        controller4.move('d', 0 , 0)
+        controller.undo should be ("undo")
+      }
+      "redo" in {
+        controller4.move('d', 0 , 0)
+        controller.redo should be ("redo")
       }
 
     }

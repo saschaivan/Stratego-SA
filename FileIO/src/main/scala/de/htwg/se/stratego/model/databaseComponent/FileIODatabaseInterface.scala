@@ -1,10 +1,8 @@
-package de.htwg.se.stratego.model.fileIODatabase
+package de.htwg.se.stratego.model.databaseComponent
 
 import scala.concurrent.Future
 
 trait FileIODatabaseInterface {
-
-  def create(): Unit
 
   def update(id: Int, game: Future[String]) : Unit
 

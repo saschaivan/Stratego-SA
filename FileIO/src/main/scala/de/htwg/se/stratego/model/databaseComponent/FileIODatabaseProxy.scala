@@ -1,16 +1,15 @@
-package de.htwg.se.stratego.model.fileIODatabase
+package de.htwg.se.stratego.model.databaseComponent
 
 import com.google.inject.Guice
 
 import scala.concurrent.{Await, Future}
-import scala.concurrent.duration.Duration
+import de.htwg.se.stratego.model.FileIOModule
 
 class FileIODatabaseProxy extends FileIODatabaseInterface {
 
   val injector = Guice.createInjector(new FileIOModule)
   val db = injector.getInstance(classOf[FileIODatabaseInterface])
 
-  def create(): Unit = db.create
 
   def update(id: Int, game: Future[String]): Unit = db.update(id, game)
 

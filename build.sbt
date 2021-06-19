@@ -25,4 +25,4 @@ libraryDependencies ++= Seq(
   "com.typesafe.akka" %% "akka-http-spray-json" % AkkaHttpVersion
 )
 
-coverageExcludedPackages := ".*gui.*;.*Stratego.*"
+coverageExcludedPackages := ".*gui.*;.*Stratego.*;.*RootService.*"

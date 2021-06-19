@@ -16,8 +16,10 @@ import akka.http.scaladsl.unmarshalling.Unmarshal
 import de.htwg.se.stratego.controller.controllerComponent._
 import de.htwg.se.stratego.model.matchFieldComponent.matchFieldBaseImpl.{CharacterList, Colour, Field, Figure, Game, GameCharacter, MatchField, Matrix, Player}
 import play.api.libs.json.{JsNumber, JsObject, JsValue, Json}
+
 import scala.util.{Failure, Success}
-import scala.concurrent.{Future}
+import scala.concurrent.Future
+import scala.xml.{Elem, PrettyPrinter}
 
 class Controller @Inject()(matchField:MatchFieldInterface) extends ControllerInterface with Publisher {
 
@@ -27,10 +29,6 @@ class Controller @Inject()(matchField:MatchFieldInterface) extends ControllerInt
   val uri = "fileio_service"
 
   val port = 8081
-
-  def createTables(): Unit = {
-    Http().singleRequest(HttpRequest(uri = s"http://${uri}:${port}/createTables"))
-  }
 
   val list = CharacterList(matchField.fields.matrixSize)
   val playerBlue = Player("PlayerBlue", list.getCharacterList())
@@ -203,17 +201,50 @@ class Controller @Inject()(matchField:MatchFieldInterface) extends ControllerInt
   override def getField: Matrix[Field] = game.matchField.fields
 
   override def load: String = {
-    val responseFuture: Future[HttpResponse] = Http().singleRequest(HttpRequest(uri = s"http://${uri}:${port}/json"))
+    val responseFuture: Future[HttpResponse] = Http().singleRequest(HttpRequest(uri = s"http://${uri}:${port}/fileIO"))
     responseFuture.onComplete {
       case Failure(_) => sys.error("HttpResponse failure")
       case Success(res) =>
         Unmarshal(res.entity).to[String].onComplete {
           case Failure(_) => sys.error("Marshal failure")
           case Success(result) =>
-            unpackJson(result)
+            print(result)
+            if(result.startsWith("{")) {
+              println("unpack json")
+              unpackJson(result)
+            }
+            if(result.startsWith("<")) {
+              println("unpack xml")
+              unpackXML(result)
+            }
         }
     }
     "load"
+  }
+
+  def unpackXML(result: String): Unit = {
+    val file = scala.xml.XML.loadString(result)
+    val newPlayerIndex = (file \\ "matchField" \ "@currentPlayerIndex").text.toInt
+    val playerS = (file \\ "matchField" \ "@players").text
+    val injector = Guice.createInjector(new StrategoModule)
+    var newMatchField = injector.getInstance(classOf[MatchFieldInterface])
+    val fieldNodes = (file \\ "field")
+    for(field <- fieldNodes){
+      val row: Int = (field \ "@row").text.toInt
+      val col: Int = (field\ "@col").text.toInt
+      val figName: String = (field\ "@figName").text
+      val figValue: Int = (field\ "@figValue").text.toInt
+      val colour:Int = (field\ "@colour").text.toInt
+      newMatchField = matchField.addChar(row, col, GameCharacter(Figure.FigureVal(figName,figValue)),
+        Colour.FigureCol(colour))
+    }
+    game = game.copy(matchField = newMatchField)
+    currentPlayerIndex = newPlayerIndex
+    setPlayers(playerS)
+    state = GameState(this)
+    gameStatus=LOAD
+    publish(new FieldChanged)
+    publish(new LoadGame)
   }
 
   def unpackJson(result: String): Unit = {
@@ -268,15 +299,40 @@ class Controller @Inject()(matchField:MatchFieldInterface) extends ControllerInt
     )
   }
 
-  override def save: String = {
+  def cellToXml(matchField: MatchFieldInterface, row: Int, col: Int): Any = {
+    if(matchField.fields.field(row,col).isSet){
+      <field row={row.toString} col={col.toString} figName={matchField.fields.field(row,col).character.get.figure.name}
+             figValue={matchField.fields.field(row,col).character.get.figure.value.toString}
+             colour={matchField.fields.field(row,col).colour.get.value.toString}>
+      </field>
+    }
+  }
+
+  def matchFieldToXml(matchField: MatchFieldInterface, currentPlayerIndex: Int, playerS: String): Elem ={
+    <matchField  currentPlayerIndex={ currentPlayerIndex.toString} players={playerS}>
+      {
+      for{
+        row <- 0 until matchField.fields.matrixSize
+        col <- 0 until matchField.fields.matrixSize
+      } yield cellToXml(matchField, row, col)
+      }
+    </matchField>
+
+  }
+
+  override def save: Unit = {
     val players = if (playerListBuffer.isEmpty) playerList else playerListBuffer.toList
     publish(new FieldChanged)
     gameStatus=SAVE
     val playerS = players(0) + " " + players(1)
-    val gamestate: String = Json.prettyPrint(matchFieldToJson(game.matchField, currentPlayerIndex, playerS))
+    val prettyPrinter = new PrettyPrinter(120,4)
+    val gamestate = Json.prettyPrint(matchFieldToJson(game.matchField, currentPlayerIndex, playerS))
+    print(gamestate)
+    val gamestatexml = prettyPrinter.format(matchFieldToXml(game.matchField, currentPlayerIndex, playerS))
     val responseFuture: Future[HttpResponse] = Http()
-      .singleRequest(HttpRequest(method = HttpMethods.POST, uri = s"http://${uri}:${port}/json", entity = gamestate))
-    "save"
+      .singleRequest(HttpRequest(method = HttpMethods.POST, uri = s"http://${uri}:${port}/fileIO/json", entity = gamestate))
+    val responseFuturexml: Future[HttpResponse] = Http()
+      .singleRequest(HttpRequest(method = HttpMethods.POST, uri = s"http://${uri}:${port}/fileIO/xml", entity = gamestatexml))
   }
 
   override def savedb: Unit = {

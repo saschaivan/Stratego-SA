@@ -1,7 +1,7 @@
-package de.htwg.se.stratego.model.fileIODatabase.fileIOMongo
+package de.htwg.se.stratego.model.databaseComponent.fileIOMongo
 
 import scala.util.{Failure, Success, Try}
-import de.htwg.se.stratego.model.fileIODatabase.FileIODatabaseInterface
+import de.htwg.se.stratego.model.databaseComponent.FileIODatabaseInterface
 import org.mongodb.scala._
 import org.mongodb.scala.model.Filters.equal
 import org.mongodb.scala.result.{DeleteResult, InsertOneResult, UpdateResult}
@@ -57,7 +57,5 @@ class FileIOMongo extends FileIODatabaseInterface {
     })
   }
 
-
-  override def create(): Unit = ???
 
 }

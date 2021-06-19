@@ -1,6 +1,6 @@
-package de.htwg.se.stratego.model.fileIODatabase.fileIOSlick
+package de.htwg.se.stratego.model.databaseComponent.fileIOSlick
 
-import de.htwg.se.stratego.model.fileIODatabase.FileIODatabaseInterface
+import de.htwg.se.stratego.model.databaseComponent.FileIODatabaseInterface
 import play.api.libs.json.{JsArray, JsNumber, JsObject, JsValue, Json}
 import slick.jdbc.PostgresProfile.api._
 import slick.jdbc.JdbcBackend.Database
@@ -83,20 +83,17 @@ class FileIOSlick extends FileIODatabaseInterface {
           })
           obj
         }))))
-    //println(string)
     string
   }
 
   private def readPlayer: (Int, Int, String, Int) = {
     val player@(id, playerIndex, players, sizeOfMatchfield) = Await.result(database.run(slickplayertable.result.head), Duration.Inf)
-    //println(id.toString + " " + playerIndex.toString + " " + players + " " + sizeOfMatchfield)
     (id, playerIndex, players, sizeOfMatchfield)
   }
 
   private def readMatchfieldfromdb: ListBuffer[Matchfield] = {
     val matchfieldlist: ListBuffer[Matchfield] = ListBuffer.empty
     Await.result(database.run(slickmatchfieldtable.result.map(_.foreach(f => matchfieldlist.append(Matchfield(f.id, f.row, f.col, f.figName, f.figValue, f.colour))))), Duration.Inf)
-    //matchfieldlist.foreach(f => println(f))
     matchfieldlist
   }
 
@@ -104,7 +101,5 @@ class FileIOSlick extends FileIODatabaseInterface {
     database.run(slickplayertable.delete)
     database.run(slickmatchfieldtable.delete)
   }
-
-  override def create(): Unit = ???
 
 }

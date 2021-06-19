@@ -11,7 +11,7 @@ import scala.util.{Failure, Success, Try}
 
 class FileIO extends FileIOInterface {
 
-  def load_JSON: String = {
+  def load: String = {
     fileNotFound("matchField.json") match {
       case Success(v) => println("File Found")
       case Failure(v) => JOptionPane.showMessageDialog(null, "Es ist kein Spielstand vorhanden!")
@@ -25,10 +25,10 @@ class FileIO extends FileIOInterface {
     Try(Source.fromFile(filename).getLines().mkString)
   }
 
-  def save(gamestate_json: String): Unit = {
+  def save(gamestate: String): Unit = {
     import java.io._
     val print_writer = new PrintWriter(new File("matchField.json"))
-    print_writer.write(gamestate_json)
+    print_writer.write(gamestate)
     print_writer.close()
   }
 
