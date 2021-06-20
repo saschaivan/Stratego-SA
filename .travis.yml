@@ -4,10 +4,6 @@ scala:
 
 script:
 - sbt clean coverage test coverageReport
-- cd Tui
-- sbt clean coverage test coverageReport
-- cd ../FileIO
-- sbt clean coverage test coverageReport
 
 after_success:
 - sbt coverageReport coveralls
