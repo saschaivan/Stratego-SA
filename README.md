@@ -13,7 +13,7 @@ Build status of continus integration with travis
 
 with coveralls.io
 
-[![Coverage Status](https://coveralls.io/repos/github/saschaivan/Stratego-SA/badge.svg?branch=Developer)](https://coveralls.io/github/saschaivan/Stratego-SA?branch=Developer)
+[![Coverage Status](https://coveralls.io/repos/github/saschaivan/Stratego-SA/badge.svg?branch=main)](https://coveralls.io/github/saschaivan/Stratego-SA?branch=main)
 
 
 ## Gameplay
