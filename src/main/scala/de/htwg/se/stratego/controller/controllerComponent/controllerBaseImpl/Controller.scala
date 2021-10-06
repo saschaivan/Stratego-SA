@@ -199,6 +199,11 @@ class Controller @Inject()(var matchField:MatchFieldInterface) extends Controlle
 
   override def getField: Matrix[Field] = game.matchField.fields
 
+  override def exit: String = {
+    System.exit(0)
+    "Bye bye!"
+  }
+
   override def load: String = {
     val (newmatchField, newPlayerIndex, newPlayers) = fileIO.load
     game = game.copy(matchField = newmatchField)

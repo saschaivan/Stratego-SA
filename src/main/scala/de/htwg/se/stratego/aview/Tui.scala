@@ -10,7 +10,7 @@ class Tui(controller: ControllerInterface) extends Reactor {
 
   def processInputLine(input: String):String = {
     input match {
-      case "q" =>"Bye bye!"
+      case "q" => controller.exit
       case "n" => controller.createEmptyMatchfield(size)
       case "z" => controller.undo
       case "y" => controller.redo
@@ -22,13 +22,13 @@ class Tui(controller: ControllerInterface) extends Reactor {
 
   reactions +={
     case event: FieldChanged => printTui
-    case event: PlayerChanged => println("Hello " + controller.playerList(0) + " and "+ controller.playerList(1) + "!")
+    case event: PlayerChanged => println("Hello " + controller.playerListBuffer(0) + " and "+ controller.playerListBuffer(1) + "!")
     case event: MachtfieldInitialized => println("Matchfield initialized")
     case event: NewGame =>
-      printTui
       println("Created new matchfield\nPlease enter the names like (player1 player2)")
-    case event: GameFinished => println("Game finished! " + controller.playerList(controller.currentPlayerIndex) + " has won the game!")
-    case event: PlayerSwitch => println(controller.playerList(controller.currentPlayerIndex) + " it's youre turn!")
+      printTui
+    case event: GameFinished => println("Game finished! " + controller.playerListBuffer(controller.currentPlayerIndex) + " has won the game!")
+    case event: PlayerSwitch => println(controller.playerListBuffer(controller.currentPlayerIndex) + " it's youre turn!")
   }
 
   def printTui: Unit = {

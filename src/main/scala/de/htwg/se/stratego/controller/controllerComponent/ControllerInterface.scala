@@ -31,6 +31,7 @@ trait ControllerInterface extends Publisher {
   def getField:Matrix[Field]
   def load:String
   def save:String
+  def exit:String
 }
 
 

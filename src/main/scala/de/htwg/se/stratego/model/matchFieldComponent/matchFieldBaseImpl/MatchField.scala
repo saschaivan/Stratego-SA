@@ -22,10 +22,12 @@ case class MatchField @Inject() (fields: Matrix[Field]) extends MatchFieldInterf
   def legend():String = {
     val welcome = "**********  STRATEGO  **********\n\n"
     val n = "n:   create a new empty machtfield\n"
+    val i = "n:   set all figures automatically\n"
+    val s = "s:   set one figure with the format \"s row col figure\"\n"
     val z = "z:   undo\n"
     val y = "y:   redo\n"
     val q = "q:   quit the programm\n"
-    welcome + n + z + y + q
+    welcome + n + i + s + z + y + q
   }
 
   def frame(row:Int): String = {

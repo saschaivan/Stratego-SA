@@ -16,6 +16,7 @@ object Stratego {
 
   def main(args: Array[String]): Unit = {
     var input = ""
+    println("Enter the player names in the format \"Player1 Player2\"")
     do {
       input = readLine()
       println(tui.processInputLine(input))
